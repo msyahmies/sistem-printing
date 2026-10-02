@@ -1,0 +1,195 @@
+:root {
+  --utama: #e63946;
+  --utama-gelap: #b52a35;
+  --wa: #25d366;
+  --wa-gelap: #1da851;
+  --teks: #1d2433;
+  --kelabu: #6b7280;
+  --garis: #e5e7eb;
+  --latar: #f6f7fb;
+  --kad: #ffffff;
+  --jejari: 14px;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font-family: "Poppins", system-ui, sans-serif;
+  color: var(--teks);
+  background: var(--latar);
+  line-height: 1.5;
+}
+
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+
+/* ---------- Hero ---------- */
+.hero {
+  background: linear-gradient(135deg, var(--utama), #ff8a5c);
+  color: #fff;
+  padding: 40px 0 56px;
+  text-align: center;
+}
+.hero h1 { margin: 0; font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; }
+.hero p { margin: 4px 0 20px; opacity: .95; }
+.langkah {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  counter-reset: l;
+}
+.langkah li { counter-increment: l; }
+.langkah a {
+  display: inline-block; color: #fff; text-decoration: none;
+  background: rgba(255,255,255,.18); border-radius: 999px;
+  padding: 6px 14px; font-size: .9rem;
+}
+.langkah a::before { content: counter(l) ". "; font-weight: 600; }
+
+/* ---------- Kad seksyen ---------- */
+main { margin-top: -32px; }
+.kad {
+  background: var(--kad);
+  border-radius: var(--jejari);
+  box-shadow: 0 6px 24px rgba(0,0,0,.06);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.kad h2 { margin: 0 0 4px; display: flex; align-items: center; gap: 10px; font-size: 1.3rem; }
+.kad h3 { margin: 22px 0 10px; font-size: 1rem; }
+.no {
+  display: inline-grid; place-items: center;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--utama); color: #fff; font-size: .95rem;
+}
+.kecil { color: var(--kelabu); font-size: .85rem; margin: 4px 0 0; }
+.tengah { text-align: center; }
+
+/* ---------- Template ---------- */
+.grid-template {
+  display: grid; gap: 12px; margin-top: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+.template {
+  border: 2px solid var(--garis); border-radius: 12px; background: #fafafa;
+  padding: 10px; cursor: pointer; text-align: center; font: inherit; color: inherit;
+  transition: border-color .15s, transform .15s;
+}
+.template:hover { transform: translateY(-2px); }
+.template svg, .template .ikon-upload { width: 80px; height: 80px; display: block; margin: 0 auto 6px; }
+.template .ikon-upload { display: grid; place-items: center; font-size: 2.2rem; border: 2px dashed var(--garis); border-radius: 12px; }
+.template span { font-size: .8rem; }
+.template.aktif, .pilihan.aktif { border-color: var(--utama); background: #fff3f4; }
+
+.editor {
+  display: grid; gap: 20px; margin-top: 20px;
+  grid-template-columns: 220px 1fr;
+}
+.editor .semak { grid-column: 1 / -1; }
+.pratonton { text-align: center; }
+.pratonton-kanvas {
+  width: 200px; height: 200px; margin: 0 auto;
+  display: grid; place-items: center;
+  background:
+    conic-gradient(#eee 25%, #fff 0 50%, #eee 0 75%, #fff 0) 0 0 / 20px 20px;
+  border-radius: 12px; overflow: hidden;
+}
+.pratonton-kanvas svg, .pratonton-kanvas img { max-width: 90%; max-height: 90%; }
+
+.kawalan { display: flex; flex-direction: column; gap: 12px; }
+label { display: flex; flex-direction: column; gap: 4px; font-size: .9rem; font-weight: 600; }
+input[type=text], input[type=number], textarea {
+  font: inherit; font-weight: 400; padding: 10px 12px;
+  border: 1.5px solid var(--garis); border-radius: 10px; width: 100%;
+}
+input:focus, textarea:focus { outline: none; border-color: var(--utama); }
+input[type=color] { width: 56px; height: 36px; border: none; padding: 0; background: none; cursor: pointer; }
+.baris { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+.semak { flex-direction: row; align-items: center; gap: 8px; font-weight: 400; cursor: pointer; }
+.semak input { width: 18px; height: 18px; accent-color: var(--utama); }
+
+.upload {
+  border: 2px dashed var(--garis); border-radius: 12px; padding: 28px 16px;
+  text-align: center; cursor: pointer; font-weight: 400;
+}
+.upload:hover { border-color: var(--utama); }
+.upload input { display: none; }
+
+/* ---------- Pilihan jenis ---------- */
+.grid-pilihan {
+  display: grid; gap: 12px; margin-top: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+.pilihan {
+  border: 2px solid var(--garis); border-radius: 12px; padding: 14px;
+  cursor: pointer; text-align: left; background: #fff; font: inherit; color: inherit;
+}
+.pilihan strong { display: block; }
+.pilihan small { color: var(--kelabu); display: block; margin-top: 4px; }
+.pilihan .sampel { width: 100%; height: 36px; border-radius: 8px; margin-bottom: 10px; }
+
+.pil { display: flex; flex-wrap: wrap; gap: 8px; }
+.pil button {
+  font: inherit; font-size: .9rem; cursor: pointer;
+  border: 1.5px solid var(--garis); background: #fff; color: var(--teks);
+  border-radius: 999px; padding: 7px 14px;
+}
+.pil button.aktif { background: var(--utama); border-color: var(--utama); color: #fff; }
+
+.saiz-custom { margin-top: 12px; }
+.saiz-custom label { width: 110px; }
+.saiz-custom span { padding-bottom: 10px; }
+.kuantiti-custom { margin-top: 12px; max-width: 240px; }
+
+/* ---------- Ringkasan harga ---------- */
+.ringkasan {
+  margin-top: 24px; border-radius: 12px; background: var(--latar);
+  padding: 18px;
+}
+.ringkasan table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.ringkasan td { padding: 5px 0; }
+.ringkasan td:last-child { text-align: right; font-weight: 600; }
+.ringkasan .diskaun td { color: #15803d; }
+.ringkasan .jumlah td { border-top: 2px dashed var(--garis); padding-top: 12px; font-size: 1.25rem; font-weight: 800; }
+.ringkasan .jumlah td:last-child { color: var(--utama); }
+.ringkasan .sekeping { text-align: right; color: var(--kelabu); font-size: .85rem; }
+.ringkasan .petua { margin-top: 10px; font-size: .85rem; color: #b45309; background: #fffbeb; padding: 8px 12px; border-radius: 8px; }
+
+.nota { margin-top: 18px; }
+
+/* ---------- Butang WhatsApp ---------- */
+.btn-wa {
+  margin-top: 18px; width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font: inherit; font-weight: 600; font-size: 1.1rem;
+  background: var(--wa); color: #fff; border: none; border-radius: 12px;
+  padding: 16px; cursor: pointer;
+}
+.btn-wa:hover { background: var(--wa-gelap); }
+.btn-wa svg { width: 26px; height: 26px; }
+
+.wa-terapung {
+  position: fixed; right: 18px; bottom: 18px; z-index: 50;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--wa); color: #fff; text-decoration: none;
+  border-radius: 999px; padding: 12px 18px 12px 14px;
+  box-shadow: 0 6px 20px rgba(37,211,102,.45);
+  font-weight: 600;
+  animation: denyut 2.4s infinite;
+}
+.wa-terapung svg { width: 28px; height: 28px; }
+.wa-terapung:hover { background: var(--wa-gelap); }
+@keyframes denyut {
+  0%, 100% { box-shadow: 0 6px 20px rgba(37,211,102,.45); }
+  50% { box-shadow: 0 6px 30px rgba(37,211,102,.8); }
+}
+
+footer { padding: 20px 16px 100px; }
+
+/* ---------- Telefon ---------- */
+@media (max-width: 640px) {
+  .kad { padding: 18px 16px; }
+  .editor { grid-template-columns: 1fr; }
+  .wa-terapung span { display: none; }
+  .wa-terapung { padding: 14px; }
+}

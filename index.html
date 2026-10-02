@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tempah Sticker Custom</title>
+  <meta name="description" content="Pilih design sticker, jenis sticker dan kira harga terus. Tempah melalui WhatsApp.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <h1 id="namaKedai">Sticker Custom</h1>
+      <p id="slogan"></p>
+      <ol class="langkah">
+        <li><a href="#design">Pilih design</a></li>
+        <li><a href="#jenis">Pilih jenis</a></li>
+        <li><a href="#harga">Kira harga</a></li>
+        <li><a href="#harga">Tempah via WhatsApp</a></li>
+      </ol>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- 1. DESIGN -->
+    <section id="design" class="kad">
+      <h2><span class="no">1</span> Pilih Design</h2>
+      <p class="kecil">Pilih template dan tukar teks/warna, atau muat naik design sendiri.</p>
+
+      <div class="grid-template" id="senaraiTemplate"></div>
+
+      <div class="editor">
+        <div class="pratonton">
+          <div id="pratonton" class="pratonton-kanvas"></div>
+          <small class="kecil" id="labelPratonton">Pratonton</small>
+        </div>
+
+        <div class="kawalan" id="kawalanTemplate">
+          <label>Teks utama
+            <input type="text" id="teks1" maxlength="24" value="Nama Kedai">
+          </label>
+          <label>Teks kedua
+            <input type="text" id="teks2" maxlength="32" value="Sedap & Berkualiti">
+          </label>
+          <div class="baris">
+            <label>Warna utama <input type="color" id="warna1" value="#e63946"></label>
+            <label>Warna latar <input type="color" id="warna2" value="#ffffff"></label>
+          </div>
+        </div>
+
+        <div class="kawalan" id="kawalanUpload" hidden>
+          <label class="upload">
+            <input type="file" id="failDesign" accept="image/*">
+            <span>📁 Klik untuk muat naik design (PNG / JPG)</span>
+          </label>
+          <p class="kecil">Fail ini untuk pratonton sahaja. Sila hantar fail asal dalam chat WhatsApp selepas tempah.</p>
+        </div>
+
+        <label class="semak">
+          <input type="checkbox" id="mintaDesign">
+          <span>Saya mahu pihak kedai bantu design / ubah suai (+RM<span id="cajDesign"></span>)</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- 2. JENIS -->
+    <section id="jenis" class="kad">
+      <h2><span class="no">2</span> Pilih Jenis Sticker</h2>
+      <div class="grid-pilihan" id="senaraiJenis"></div>
+
+      <h3>Bentuk potongan</h3>
+      <div class="pil" id="senaraiBentuk"></div>
+
+      <h3>Laminasi</h3>
+      <div class="pil" id="senaraiLaminasi"></div>
+    </section>
+
+    <!-- 3. HARGA -->
+    <section id="harga" class="kad">
+      <h2><span class="no">3</span> Saiz, Kuantiti &amp; Harga</h2>
+
+      <h3>Saiz (cm)</h3>
+      <div class="pil" id="senaraiSaiz"></div>
+      <div class="baris saiz-custom">
+        <label>Lebar <input type="number" id="lebar" min="1" max="50" step="0.5" value="5"></label>
+        <span>×</span>
+        <label>Tinggi <input type="number" id="tinggi" min="1" max="50" step="0.5" value="5"></label>
+      </div>
+
+      <h3>Kuantiti</h3>
+      <div class="pil" id="senaraiKuantiti"></div>
+      <label class="kuantiti-custom">Atau masukkan kuantiti
+        <input type="number" id="kuantiti" min="1" step="1" value="100">
+      </label>
+
+      <div class="ringkasan" id="ringkasan"></div>
+
+      <label class="nota">Nota tambahan (pilihan)
+        <textarea id="nota" rows="2" placeholder="Contoh: perlu siap sebelum 20 hb"></textarea>
+      </label>
+
+      <button class="btn-wa" id="btnTempah" type="button">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3C8.8 3 3 8.7 3 15.8c0 2.5.7 4.9 2 7L3 29l6.4-2c2 1.1 4.3 1.7 6.6 1.7 7.2 0 13-5.7 13-12.8S23.2 3 16 3zm0 23.4c-2.1 0-4.2-.6-6-1.7l-.4-.3-3.8 1.2 1.2-3.7-.3-.4a10.4 10.4 0 0 1-1.6-5.6C5.1 10 10 5.3 16 5.3s10.9 4.7 10.9 10.6S22 26.4 16 26.4zm6-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8.9 8.9 0 0 1-4.4-3.8c-.3-.6.3-.5 1-1.7.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.1-1.2 2.7 1.2 3.2 1.4 3.4 2.4 3.6 5.8 5c2.2.9 3 1 4.1.8.7-.1 1.9-.8 2.2-1.5s.3-1.4.2-1.5-.3-.2-.6-.3z"/></svg>
+        Tempah via WhatsApp
+      </button>
+      <p class="kecil tengah">Harga adalah anggaran. Harga muktamad akan disahkan melalui WhatsApp.</p>
+    </section>
+  </main>
+
+  <footer class="wrap kecil tengah" id="footer"></footer>
+
+  <!-- Butang WhatsApp terapung untuk pertanyaan -->
+  <a class="wa-terapung" id="waTerapung" target="_blank" rel="noopener" aria-label="Tanya melalui WhatsApp">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3C8.8 3 3 8.7 3 15.8c0 2.5.7 4.9 2 7L3 29l6.4-2c2 1.1 4.3 1.7 6.6 1.7 7.2 0 13-5.7 13-12.8S23.2 3 16 3zm0 23.4c-2.1 0-4.2-.6-6-1.7l-.4-.3-3.8 1.2 1.2-3.7-.3-.4a10.4 10.4 0 0 1-1.6-5.6C5.1 10 10 5.3 16 5.3s10.9 4.7 10.9 10.6S22 26.4 16 26.4zm6-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8.9 8.9 0 0 1-4.4-3.8c-.3-.6.3-.5 1-1.7.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.1-1.2 2.7 1.2 3.2 1.4 3.4 2.4 3.6 5.8 5c2.2.9 3 1 4.1.8.7-.1 1.9-.8 2.2-1.5s.3-1.4.2-1.5-.3-.2-.6-.3z"/></svg>
+    <span>Ada soalan?</span>
+  </a>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
