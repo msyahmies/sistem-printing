@@ -30,12 +30,13 @@ body{font-family:var(--body);font-size:15px;line-height:1.5;min-height:100%}
 button,input,select,textarea{font:inherit;color:inherit}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--head)}
-header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--head);color:var(--head-ink);
+header.top{position:sticky;isolation:isolate;top:env(safe-area-inset-top,0px);z-index:5;background:var(--head);color:var(--head-ink);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:4px solid var(--sun)}
 .top-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px;padding-block:12px;flex-wrap:wrap}
 .brand{font-family:var(--display);font-weight:700;font-size:21px;line-height:1.05}
 .brand small{display:block;font-family:var(--body);font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--head-soft);margin-top:4px}
-.status{margin-left:auto;font-size:12px;color:var(--head-soft);display:flex;align-items:center;gap:6px}
+.hgrp{margin-left:auto;display:flex;align-items:center;gap:10px}
+.status{font-size:12px;color:var(--head-soft);display:flex;align-items:center;gap:6px}
 .dot{width:8px;height:8px;border-radius:50%;background:#8FF0C4}
 .dot.wait{background:var(--sun)}.dot.off{background:#FF9C8A}
 nav.tabs{display:flex;gap:2px}
@@ -150,14 +151,51 @@ td.num{font-family:var(--mono)}
 .meter{height:6px;border-radius:999px;background:var(--sunk);overflow:hidden}
 .meter i{display:block;height:100%;background:var(--leaf)}
 .stock.low .meter i{background:var(--sun)}.stock.out .meter i{background:var(--bad)}
+
+/* Tema pilihan (disimpan di peranti ini). html:root mengatasi blok gelap di atas. */
+html:root[data-skin="cerah"]{
+  --bg:#F2F8F7; --surface:#FFFFFF; --sunk:#E6F1EF; --line:#CBE0DC;
+  --ink:#12302D; --muted:#4F6F6B; --head:#0B7C78; --head-ink:#FFFFFF; --head-soft:#D3F0EC;
+  --accent:#F4734F; --accent-ink:#2B0F06; --sun:#F6B83C; --leaf:#0E9F67; --sky:#3B8FD9;
+  --good:#0B8A57; --bad:#D23B2A; --goodbg:#DDF5E9; --badbg:#FCE3DE; --warnbg:#FFF1CF; --warn:#8A5A00; --tab:#0B7C78; color-scheme:light}
+html:root[data-skin="mentari"]{
+  --bg:#FFF9EC; --surface:#FFFFFF; --sunk:#FFF1D6; --line:#F1DCAE;
+  --ink:#3A2A10; --muted:#7A6239; --head:#D9480F; --head-ink:#FFFFFF; --head-soft:#FFE3D3;
+  --accent:#1C9BD8; --accent-ink:#04202F; --sun:#FFC21A; --leaf:#2F9E44; --sky:#1C7ED6;
+  --good:#2B8A3E; --bad:#C92A2A; --goodbg:#E3F7E6; --badbg:#FFE3E3; --warnbg:#FFF0C2; --warn:#8A5A00; --tab:#D9480F; color-scheme:light}
+html:root[data-skin="langit"]{
+  --bg:#F1F7FF; --surface:#FFFFFF; --sunk:#E3EEFC; --line:#C9DCF5;
+  --ink:#10253F; --muted:#4C6585; --head:#1C6FD1; --head-ink:#FFFFFF; --head-soft:#D6E7FF;
+  --accent:#FF7A59; --accent-ink:#2B0F06; --sun:#FFC23D; --leaf:#12B886; --sky:#4DABF7;
+  --good:#0B8457; --bad:#E03131; --goodbg:#DDF7EC; --badbg:#FFE3E3; --warnbg:#FFF3C4; --warn:#8A5A00; --tab:#1C6FD1; color-scheme:light}
+html:root[data-skin="bunga"]{
+  --bg:#FFF5F8; --surface:#FFFFFF; --sunk:#FDE7EF; --line:#F5CADB;
+  --ink:#3B1730; --muted:#855670; --head:#C2255C; --head-ink:#FFFFFF; --head-soft:#FFDDE9;
+  --accent:#12B886; --accent-ink:#04261A; --sun:#FFB84D; --leaf:#0CA678; --sky:#7950F2;
+  --good:#08805C; --bad:#E03131; --goodbg:#DCF7EE; --badbg:#FFE3E3; --warnbg:#FFF1CF; --warn:#8A5A00; --tab:#C2255C; color-scheme:light}
+html:root[data-skin="gelap"]{
+  --bg:#0B1918; --surface:#122423; --sunk:#192F2D; --line:#27443F;
+  --ink:#E2F2EF; --muted:#8EB2AC; --head:#0A5754; --head-ink:#F2FFFD; --head-soft:#A9DCD5;
+  --accent:#FF8A6B; --accent-ink:#2B0F06; --sun:#F7C55E; --leaf:#3DD39A; --sky:#6FB2EE;
+  --good:#45D79C; --bad:#FF7F6E; --goodbg:#123A2B; --badbg:#3D1A16; --warnbg:#3A2C0C; --warn:#F7C55E; --tab:#5FD4C9; color-scheme:dark}
+.theme-btn{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:var(--head-ink);border-radius:999px;padding:6px 12px;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.theme-pop{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:100%;margin-top:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:grid;gap:6px;width:min(260px,calc(100vw - 32px));box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:8}
+.theme-pop[hidden],.toast[hidden]{display:none}
+.skin{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;text-align:left;width:100%}
+.skin[aria-pressed="true"]{border-color:var(--head);box-shadow:inset 0 0 0 1px var(--head)}
+.sw{display:flex;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,.12)}
+.sw i{width:14px;height:22px;display:block}
+.skins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
 @media (prefers-reduced-motion:no-preference){.toast{animation:pop .2s ease-out}@keyframes pop{from{opacity:0;transform:translate(-50%,8px)}}}
 </style>
 
 <header class="top"><div class="top-in">
   <div class="brand">JT Flipping P&amp;L<small>Laporan untung rugi 2026</small></div>
   <nav class="tabs" id="tabsTop"></nav>
-  <div class="status"><span class="dot wait" id="dot"></span><span id="statusTxt">Menyambung…</span></div>
-</div></header>
+  <div class="hgrp"><div class="status"><span class="dot wait" id="dot"></span><span id="statusTxt">Menyambung…</span></div>
+  <button class="theme-btn" id="themeBtn" aria-expanded="false" aria-controls="themePop"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg>Tema</button></div>
+</div><div class="theme-pop" id="themePop" hidden></div></header>
+<script>try{document.documentElement.setAttribute("data-skin",localStorage.getItem("jt-skin")||"cerah")}catch(_){document.documentElement.setAttribute("data-skin","cerah")}</script>
 
 <main id="main">
   <div class="empty">Memuatkan data jualan, belanja dan stok… Kalau lama sangat, buka halaman ini di claude.ai sambil log masuk.</div>
@@ -180,6 +218,15 @@ const ICONS={
   stok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>',
   laporan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
   tetapan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>'};
+const SKINS=[["cerah","Teal cerah","#F2F8F7","#0B7C78","#F6B83C","#F4734F"],["mentari","Mentari","#FFF9EC","#D9480F","#FFC21A","#1C9BD8"],["langit","Langit biru","#F1F7FF","#1C6FD1","#FFC23D","#FF7A59"],["bunga","Bunga pink","#FFF5F8","#C2255C","#FFB84D","#12B886"],["gelap","Gelap","#0B1918","#0A5754","#F7C55E","#FF8A6B"],["auto","Ikut telefon","#F2F8F7","#0B7C78","#0B1918","#0A5754"]];
+const curSkin=()=>document.documentElement.getAttribute("data-skin")||"cerah";
+function skinList(){return SKINS.map(([k,l,...c])=>`<button class="skin" data-skin-pick="${k}" aria-pressed="${curSkin()===k}"><span class="sw">${c.map(x=>`<i style="background:${x}"></i>`).join("")}</span><span><b>${l}</b>${k==="auto"?'<br><span class="note">cerah/gelap ikut tetapan telefon</span>':""}</span></button>`).join("")}
+function setSkin(k){document.documentElement.setAttribute("data-skin",k);try{localStorage.setItem("jt-skin",k)}catch(_){}
+  document.querySelectorAll("[data-skin-pick]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skinPick===k)))}
+document.addEventListener("click",e=>{const pop=document.getElementById("themePop"),btn=document.getElementById("themeBtn");
+  const pick=e.target.closest("[data-skin-pick]");if(pick){setSkin(pick.dataset.skinPick);if(pop.contains(pick)){pop.hidden=true;btn.setAttribute("aria-expanded","false")}return}
+  if(e.target.closest("#themeBtn")){pop.innerHTML='<div class="eyebrow">Pilih tema</div>'+skinList();pop.hidden=!pop.hidden;btn.setAttribute("aria-expanded",String(!pop.hidden));return}
+  if(!pop.hidden&&!pop.contains(e.target)){pop.hidden=true;btn.setAttribute("aria-expanded","false")}});
 const TABS=[["isi","Isi Harian"],["belanja","Belanja"],["stok","Stok"],["laporan","Laporan"],["tetapan","Tetapan"]];
 
 const S={db:null,downloads:null,settings:null,months:{},loadedS:false,loadedM:false,
@@ -717,6 +764,7 @@ function renderTetapan(){
   const arrRow=(rid,f,l)=>{const r=st.rates.find(x=>x.id===rid);return `<span>${l}</span>${[0,1,2].map(i=>`<input type="number" step="any" min="0" value="${n(r[f][i])}" data-rate="${rid}:${f}:${i}" aria-label="${l} ${i+1}">`).join("")}`};
   const groups={};st.rates.forEach(r=>{(groups[r.prod+"|"+r.chan]=groups[r.prod+"|"+r.chan]||[]).push(r)});
   $("main").innerHTML=`<div><div class="eyebrow">Tetapan</div><h2>Harga, kos & cukai</h2><p class="note" style="margin:4px 0 0">Perubahan disimpan sendiri. Harga naik atau turun? Tekan “Harga baru mula…” supaya rekod lama kekal guna harga lama.</p></div>
+  <div class="card"><h3>Tema paparan</h3><div class="skins-grid">${skinList()}</div><div class="note">Pilihan tema disimpan di peranti ini sahaja.</div></div>
   <div class="card"><h3>Cukai</h3><div class="grid3">
     <label class="f">Cukai FB Ads (%)<input type="number" step="any" value="${n(st.taxAd)*100}" data-set="taxAd"></label>
     <label class="f">Cukai shipping (%)<input type="number" step="any" value="${n(st.taxShip)*100}" data-set="taxShip"></label>
