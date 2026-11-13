@@ -1,2 +1,4 @@
 # Fail laporan mengandungi data jualan — jangan commit
 *.xlsx
+apps/ecom/data/*.json.php
+apps/ecom/data/backup/

@@ -1,0 +1,49 @@
+JT FLIPPING P&L — CARA PASANG DI jiwatekad.my/ecom
+====================================================
+
+APA DALAM ZIP INI
+  ecom/index.html            App (paparan)
+  ecom/api.php               Simpan & baca data di hosting kau (perlu PHP 7.3+)
+  ecom/manifest.webmanifest, sw.js, icon-*.png
+                             Supaya boleh "Add to Home Screen" macam app
+  ecom/data/                 Data kau (tetapan + jualan Jan-Mac). DILINDUNGI,
+                             orang luar tak boleh buka.
+
+LANGKAH UPLOAD (cPanel)
+  1. Log masuk cPanel > File Manager > buka folder public_html
+     (folder utama untuk jiwatekad.my).
+  2. Tekan Upload, pilih fail zip ini.
+  3. Klik kanan fail zip > Extract. Pastikan hasilnya folder
+     public_html/ecom/ (bukan public_html/ecom/ecom/).
+  4. Padam fail zip selepas extract.
+  5. Klik kanan folder ecom/data > Change Permissions > 755
+     (biasanya sudah betul).
+  6. Buka https://jiwatekad.my/ecom
+  7. KALI PERTAMA: app minta "Cipta kata laluan". Buat SEKARANG juga,
+     sebelum orang lain jumpa link ini. Minimum 6 aksara.
+
+PASANG SEBAGAI APP DI TELEFON
+  Android (Chrome): buka link > menu ⋮ > "Add to Home screen" / "Install app".
+  iPhone (Safari):  buka link > butang Share > "Add to Home Screen".
+
+LUPA KATA LALUAN?
+  cPanel > File Manager > public_html/ecom/data > padam fail
+  auth.json.php dan tokens.json.php. Buka app semula dan cipta
+  kata laluan baru. Data jualan TIDAK terjejas.
+
+BACKUP
+  - App simpan salinan automatik setiap hari dalam ecom/data/backup/
+    (30 hari terakhir).
+  - Sekali-sekala, muat turun folder ecom/data (Compress > Download)
+    atau tekan "Muat turun Excel" dalam tab Laporan.
+
+KALAU ADA MASALAH
+  - "Folder data/ tidak boleh ditulis": tukar permission ecom/data ke 755.
+  - "Server tidak membalas dengan betul": pastikan PHP aktif
+    (cPanel > Select PHP Version > pilih 7.4 atau 8.x).
+  - Halaman kosong / 500: semak fail .htaccess dalam folder ecom; kalau
+    perlu, padam baris "Options -Indexes" sahaja.
+
+NOTA
+  Mulai sekarang, isi data di jiwatekad.my/ecom sahaja. App di claude.ai
+  tidak berkongsi data dengan versi website ini.

@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>JT Flipping P&amp;L 2026</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0B7C78">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JT P&amp;L">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+/* Layout: one-column business ledger; teal sticky header, bottom tab bar on phone, top tabs on desktop. */
+:root{
+  --bg:#F2F8F7; --surface:#FFFFFF; --sunk:#E6F1EF; --line:#CBE0DC;
+  --ink:#12302D; --muted:#4F6F6B; --head:#0B7C78; --head-ink:#FFFFFF; --head-soft:#D3F0EC;
+  --accent:#F4734F; --accent-ink:#2B0F06; --sun:#F6B83C; --leaf:#0E9F67; --sky:#3B8FD9;
+  --good:#0B8A57; --bad:#D23B2A; --goodbg:#DDF5E9; --badbg:#FCE3DE; --warnbg:#FFF1CF; --warn:#8A5A00;
+  --display:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r:12px; --tab:#0B7C78;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1918; --surface:#122423; --sunk:#192F2D; --line:#27443F;
+  --ink:#E2F2EF; --muted:#8EB2AC; --head:#0A5754; --head-ink:#F2FFFD; --head-soft:#A9DCD5;
+  --accent:#FF8A6B; --accent-ink:#2B0F06; --sun:#F7C55E; --leaf:#3DD39A; --sky:#6FB2EE;
+  --good:#45D79C; --bad:#FF7F6E; --goodbg:#123A2B; --badbg:#3D1A16; --warnbg:#3A2C0C; --warn:#F7C55E; --tab:#5FD4C9; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1918; --surface:#122423; --sunk:#192F2D; --line:#27443F;
+  --ink:#E2F2EF; --muted:#8EB2AC; --head:#0A5754; --head-ink:#F2FFFD; --head-soft:#A9DCD5;
+  --accent:#FF8A6B; --accent-ink:#2B0F06; --sun:#F7C55E; --leaf:#3DD39A; --sky:#6FB2EE;
+  --good:#45D79C; --bad:#FF7F6E; --goodbg:#123A2B; --badbg:#3D1A16; --warnbg:#3A2C0C; --warn:#F7C55E; --tab:#5FD4C9; color-scheme:dark}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-size:15px;line-height:1.5;min-height:100%}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--head)}
+header.top{position:sticky;isolation:isolate;top:env(safe-area-inset-top,0px);z-index:5;background:var(--head);color:var(--head-ink);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:4px solid var(--sun)}
+.top-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px;padding-block:12px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:700;font-size:21px;line-height:1.05}
+.brand small{display:block;font-family:var(--body);font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--head-soft);margin-top:4px}
+.hgrp{margin-left:auto;display:flex;align-items:center;gap:10px}
+.status{font-size:12px;color:var(--head-soft);display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:#8FF0C4}
+.dot.wait{background:var(--sun)}.dot.off{background:#FF9C8A}
+nav.tabs{display:flex;gap:2px}
+nav.tabs button{background:transparent;border:0;color:var(--head-soft);padding:8px 12px;border-radius:8px;font-weight:600;cursor:pointer}
+nav.tabs button[aria-current="page"]{background:rgba(255,255,255,.18);color:var(--head-ink)}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 110px;display:grid;gap:18px}
+main>*{min-width:0}
+@media (max-width:820px){
+  header nav.tabs{display:none}
+  .bottom{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:flex;
+    padding:6px max(6px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px))}
+  .bottom button{flex:1;min-width:0;background:none;border:0;padding:6px 1px;border-radius:8px;font-size:11px;font-weight:600;color:var(--muted);display:grid;justify-items:center;gap:2px;cursor:pointer}
+  .bottom button svg{width:22px;height:22px}
+  .bottom button[aria-current="page"]{color:var(--tab);background:var(--sunk)}
+}
+@media (min-width:821px){.bottom{display:none}main{padding-bottom:40px}}
+h2{font-family:var(--display);font-weight:700;font-size:26px;margin:0;text-wrap:balance;line-height:1.15}
+h3{font-family:var(--display);font-weight:600;font-size:18px;margin:0;line-height:1.25}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:12px;min-width:0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+.split{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:880px){.split{grid-template-columns:1fr}}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:999px;font-weight:600;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--head);color:var(--head-ink);border-color:var(--head)}
+.kpi.hero .good,.kpi.hero .bad{color:var(--head-ink);font-weight:700}
+.chip.has::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-left:6px;vertical-align:middle}
+.seg{display:inline-flex;background:var(--sunk);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:7px 14px;border-radius:8px;font-weight:600;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+label.f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
+input[type=number],input[type=text],input[type=date],select,textarea{width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:9px 10px;color:var(--ink);min-width:0}
+input[type=number]{font-family:var(--mono);-moz-appearance:textfield;appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:480px){.grid3.wrap{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pay{display:grid;gap:8px}
+.step{display:grid;gap:4px;min-width:0}
+.step span{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step .ctl{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--sunk)}
+.step .ctl button{border:0;background:var(--surface);font-size:18px;font-weight:700;cursor:pointer;color:var(--head)}
+.step .ctl input{border:0;border-radius:0;text-align:center;padding:9px 2px;font-size:17px;font-weight:600;background:transparent}
+.step small{font-size:11px;color:var(--muted);text-align:center}
+.btn{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--sunk);color:var(--ink)}
+.btn.pri{background:var(--accent);color:var(--accent-ink)}
+.btn.teal{background:var(--head);color:var(--head-ink)}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btn.danger{background:var(--badbg);color:var(--bad)}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.icon-btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;width:38px;height:38px;cursor:pointer;font-weight:700}
+details summary{cursor:pointer;font-weight:700;font-size:14px;list-style:none}
+details summary::before{content:"+ ";color:var(--accent)}
+details[open] summary::before{content:"− "}
+@media (min-width:881px){.sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px)}}
+.ledger{display:grid;gap:2px;font-size:14px}
+.ledger div{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.ledger div:last-child{border-bottom:0}
+.ledger .neg{color:var(--muted)}
+.ledger .sum{font-weight:700;border-bottom:1px solid var(--ink);color:var(--ink)}
+.ledger .total{font-weight:700;font-size:16px;border-bottom:0;padding-top:8px}
+.big{font-family:var(--mono);font-weight:600;font-size:32px;letter-spacing:-.02em;line-height:1.05}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--sunk);color:var(--muted);white-space:nowrap}
+.pill.good{background:var(--goodbg);color:var(--good)}.pill.bad{background:var(--badbg);color:var(--bad)}.pill.warn{background:var(--warnbg);color:var(--warn)}
+.list{display:grid;gap:6px}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);text-align:left;width:100%}
+button.item{cursor:pointer}
+.item.on{border-color:var(--accent);box-shadow:inset 4px 0 0 var(--accent)}
+.item b{font-weight:700}.item .sub{font-size:12px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:820px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:grid;gap:2px;min-width:0;border-top:4px solid var(--line)}
+.kpi .v{font-family:var(--mono);font-weight:600;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .d{font-size:12px;color:var(--muted)}
+.kpi.hero{background:var(--head);border-color:var(--head);color:var(--head-ink);border-top-color:var(--sun)}
+.kpi.hero .eyebrow,.kpi.hero .d{color:var(--head-soft)}
+.kpi.t-sun{border-top-color:var(--sun)}.kpi.t-acc{border-top-color:var(--accent)}.kpi.t-leaf{border-top-color:var(--leaf)}.kpi.t-sky{border-top-color:var(--sky)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:8px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--sunk);position:sticky;top:0}
+th:first-child,td:first-child{text-align:left}
+tbody tr:hover{background:var(--sunk)}
+tfoot td{font-weight:700;background:var(--sunk)}
+td.num{font-family:var(--mono)}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-family:var(--mono);font-size:10px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.hbar{display:grid;grid-template-columns:minmax(90px,auto) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13px}
+.hbar .track{height:10px;background:var(--sunk);border-radius:999px;overflow:hidden}
+.hbar .fill{height:100%;background:var(--accent);border-radius:999px}
+.empty{padding:28px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r);background:var(--surface)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;z-index:20;font-size:14px;max-width:calc(100% - 32px)}
+@media (min-width:821px){.toast{bottom:28px}}
+.note{font-size:12px;color:var(--muted)}
+.warn{background:var(--badbg);color:var(--bad);padding:10px 12px;border-radius:8px;font-size:13px;font-weight:600}
+.info{background:var(--warnbg);color:var(--warn);padding:10px 12px;border-radius:8px;font-size:13px}
+.rate-grid{display:grid;grid-template-columns:110px repeat(3,minmax(0,1fr));gap:6px;align-items:center;font-size:12px}
+.rate-grid .h{font-weight:700;color:var(--muted);text-align:center;font-size:11px;text-transform:uppercase}
+.rate-grid input{padding:6px;font-size:13px}
+.stocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.stock{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:6px;border-left:5px solid var(--leaf);cursor:pointer;text-align:left;width:100%}
+.stock.low{border-left-color:var(--sun)}.stock.out{border-left-color:var(--bad)}.stock.unset{border-left-color:var(--line)}
+.stock.on{box-shadow:0 0 0 2px var(--head)}
+.stock .q{font-family:var(--mono);font-weight:600;font-size:28px;line-height:1}
+.meter{height:6px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--leaf)}
+.stock.low .meter i{background:var(--sun)}.stock.out .meter i{background:var(--bad)}
+
+/* Tema pilihan (disimpan di peranti ini). html:root mengatasi blok gelap di atas. */
+html:root[data-skin="cerah"]{
+  --bg:#F2F8F7; --surface:#FFFFFF; --sunk:#E6F1EF; --line:#CBE0DC;
+  --ink:#12302D; --muted:#4F6F6B; --head:#0B7C78; --head-ink:#FFFFFF; --head-soft:#D3F0EC;
+  --accent:#F4734F; --accent-ink:#2B0F06; --sun:#F6B83C; --leaf:#0E9F67; --sky:#3B8FD9;
+  --good:#0B8A57; --bad:#D23B2A; --goodbg:#DDF5E9; --badbg:#FCE3DE; --warnbg:#FFF1CF; --warn:#8A5A00; --tab:#0B7C78; color-scheme:light}
+html:root[data-skin="mentari"]{
+  --bg:#FFF9EC; --surface:#FFFFFF; --sunk:#FFF1D6; --line:#F1DCAE;
+  --ink:#3A2A10; --muted:#7A6239; --head:#D9480F; --head-ink:#FFFFFF; --head-soft:#FFE3D3;
+  --accent:#1C9BD8; --accent-ink:#04202F; --sun:#FFC21A; --leaf:#2F9E44; --sky:#1C7ED6;
+  --good:#2B8A3E; --bad:#C92A2A; --goodbg:#E3F7E6; --badbg:#FFE3E3; --warnbg:#FFF0C2; --warn:#8A5A00; --tab:#D9480F; color-scheme:light}
+html:root[data-skin="langit"]{
+  --bg:#F1F7FF; --surface:#FFFFFF; --sunk:#E3EEFC; --line:#C9DCF5;
+  --ink:#10253F; --muted:#4C6585; --head:#1C6FD1; --head-ink:#FFFFFF; --head-soft:#D6E7FF;
+  --accent:#FF7A59; --accent-ink:#2B0F06; --sun:#FFC23D; --leaf:#12B886; --sky:#4DABF7;
+  --good:#0B8457; --bad:#E03131; --goodbg:#DDF7EC; --badbg:#FFE3E3; --warnbg:#FFF3C4; --warn:#8A5A00; --tab:#1C6FD1; color-scheme:light}
+html:root[data-skin="bunga"]{
+  --bg:#FFF5F8; --surface:#FFFFFF; --sunk:#FDE7EF; --line:#F5CADB;
+  --ink:#3B1730; --muted:#855670; --head:#C2255C; --head-ink:#FFFFFF; --head-soft:#FFDDE9;
+  --accent:#12B886; --accent-ink:#04261A; --sun:#FFB84D; --leaf:#0CA678; --sky:#7950F2;
+  --good:#08805C; --bad:#E03131; --goodbg:#DCF7EE; --badbg:#FFE3E3; --warnbg:#FFF1CF; --warn:#8A5A00; --tab:#C2255C; color-scheme:light}
+html:root[data-skin="gelap"]{
+  --bg:#0B1918; --surface:#122423; --sunk:#192F2D; --line:#27443F;
+  --ink:#E2F2EF; --muted:#8EB2AC; --head:#0A5754; --head-ink:#F2FFFD; --head-soft:#A9DCD5;
+  --accent:#FF8A6B; --accent-ink:#2B0F06; --sun:#F7C55E; --leaf:#3DD39A; --sky:#6FB2EE;
+  --good:#45D79C; --bad:#FF7F6E; --goodbg:#123A2B; --badbg:#3D1A16; --warnbg:#3A2C0C; --warn:#F7C55E; --tab:#5FD4C9; color-scheme:dark}
+.theme-btn{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:var(--head-ink);border-radius:999px;padding:6px 12px;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.theme-pop{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:100%;margin-top:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:grid;gap:6px;width:min(260px,calc(100vw - 32px));box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:8}
+.theme-pop[hidden],.toast[hidden]{display:none}
+.skin{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;text-align:left;width:100%}
+.skin[aria-pressed="true"]{border-color:var(--head);box-shadow:inset 0 0 0 1px var(--head)}
+.sw{display:flex;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,.12)}
+.sw i{width:14px;height:22px;display:block}
+.skins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+@media (prefers-reduced-motion:no-preference){.toast{animation:pop .2s ease-out}@keyframes pop{from{opacity:0;transform:translate(-50%,8px)}}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand">JT Flipping P&amp;L<small>Laporan untung rugi 2026</small></div>
+  <nav class="tabs" id="tabsTop"></nav>
+  <div class="hgrp"><div class="status"><span class="dot wait" id="dot"></span><span id="statusTxt">Menyambung…</span></div>
+  <button class="theme-btn" id="themeBtn" aria-expanded="false" aria-controls="themePop"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg>Tema</button></div>
+</div><div class="theme-pop" id="themePop" hidden></div></header>
+<script>try{document.documentElement.setAttribute("data-skin",localStorage.getItem("jt-skin")||"cerah")}catch(_){document.documentElement.setAttribute("data-skin","cerah")}</script>
+
+<main id="main">
+  <div class="empty">Memuatkan data jualan, belanja dan stok…</div>
+</main>
+<nav class="bottom" id="tabsBottom"></nav>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+"use strict";
+const BLN=["Jan","Feb","Mac","Apr","Mei","Jun","Jul","Ogo","Sep","Okt","Nov","Dis"];
+const BULAN=["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
+const HARI=["AHAD","ISNIN","SELASA","RABU","KHAMIS","JUMAAT","SABTU"];
+const STOK="BELI STOK";
+const DEF_CATS=[STOK,"GAJI / UPAH","SEWA","UTILITI & INTERNET","PEMBUNGKUSAN","PERALATAN","LAIN-LAIN"];
+const ICONS={
+  isi:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>',
+  belanja:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg>',
+  stok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>',
+  laporan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  tetapan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>'};
+const SKINS=[["cerah","Teal cerah","#F2F8F7","#0B7C78","#F6B83C","#F4734F"],["mentari","Mentari","#FFF9EC","#D9480F","#FFC21A","#1C9BD8"],["langit","Langit biru","#F1F7FF","#1C6FD1","#FFC23D","#FF7A59"],["bunga","Bunga pink","#FFF5F8","#C2255C","#FFB84D","#12B886"],["gelap","Gelap","#0B1918","#0A5754","#F7C55E","#FF8A6B"],["auto","Ikut telefon","#F2F8F7","#0B7C78","#0B1918","#0A5754"]];
+const curSkin=()=>document.documentElement.getAttribute("data-skin")||"cerah";
+function skinList(){return SKINS.map(([k,l,...c])=>`<button class="skin" data-skin-pick="${k}" aria-pressed="${curSkin()===k}"><span class="sw">${c.map(x=>`<i style="background:${x}"></i>`).join("")}</span><span><b>${l}</b>${k==="auto"?'<br><span class="note">cerah/gelap ikut tetapan telefon</span>':""}</span></button>`).join("")}
+function setSkin(k){document.documentElement.setAttribute("data-skin",k);try{localStorage.setItem("jt-skin",k)}catch(_){}
+  document.querySelectorAll("[data-skin-pick]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skinPick===k)))}
+document.addEventListener("click",e=>{const pop=document.getElementById("themePop"),btn=document.getElementById("themeBtn");
+  const pick=e.target.closest("[data-skin-pick]");if(pick){setSkin(pick.dataset.skinPick);if(pop.contains(pick)){pop.hidden=true;btn.setAttribute("aria-expanded","false")}return}
+  if(e.target.closest("#themeBtn")){pop.innerHTML='<div class="eyebrow">Pilih tema</div>'+skinList();pop.hidden=!pop.hidden;btn.setAttribute("aria-expanded",String(!pop.hidden));return}
+  if(!pop.hidden&&!pop.contains(e.target)){pop.hidden=true;btn.setAttribute("aria-expanded","false")}});
+const TABS=[["isi","Isi Harian"],["belanja","Belanja"],["stok","Stok"],["laporan","Laporan"],["tetapan","Tetapan"]];
+
+const S={db:null,downloads:null,settings:null,months:{},loadedS:false,loadedM:false,
+  tab:"isi",repMonth:0,form:null,dirty:false,confirmDel:null,retForm:null,expForm:null,expSub:"exp",expMonth:0,openRate:null,stockSel:null,adjForm:null};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const n=v=>{const x=Number(v);return isFinite(x)?x:0};
+const rm=v=>(v<0?"-":"")+"RM"+Math.abs(v).toLocaleString("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2});
+const int=v=>Math.round(v).toLocaleString("en-MY");
+const pct=v=>(v*100).toFixed(1)+"%";
+const x2=v=>v?v.toFixed(2)+"x":"–";
+const slug=s=>String(s).replace(/[^A-Za-z0-9]+/g,"-");
+const keyOf=r=>r.date+"__"+slug(r.prod)+"__"+slug(r.chan);
+const mkOf=d=>d.slice(0,7);
+const iso=t=>t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0");
+const todayISO=()=>iso(new Date());
+const dayName=d=>HARI[new Date(d+"T00:00:00").getDay()];
+const fmtDate=d=>{const [y,m,dd]=d.split("-");return +dd+" "+BLN[+m-1]+" "+y};
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+let toastT;function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2400)}
+
+/* ---------- tetapan lalai untuk ciri baru ---------- */
+function normSettings(st){
+  if(!st) return st;
+  if(!Array.isArray(st.expenseCats)||!st.expenseCats.length) st.expenseCats=DEF_CATS.slice();
+  if(!st.expenseCats.includes(STOK)) st.expenseCats.unshift(STOK);
+  if(!Array.isArray(st.stock)){
+    st.stock=st.products.map(p=>({name:p.name,opening:0,openingDate:st.year+"-01-01",min:50}))
+      .concat([{name:"HALIA PATCH",opening:0,openingDate:st.year+"-01-01",min:50},{name:"KAYU",opening:0,openingDate:st.year+"-01-01",min:10}]);
+  }
+  return st;
+}
+
+/* ---------- kira jualan (sama seperti Excel) ---------- */
+function rateFor(prod,chan,date){
+  let best=null;
+  for(const r of (S.settings?.rates||[])){ if(r.prod===prod&&r.chan===chan&&r.from<=date&&(!best||r.from>best.from)) best=r; }
+  return best;
+}
+function prodOf(name){return (S.settings?.products||[]).find(p=>p.name===name)}
+function calc(row){
+  const r=rateFor(row.prod,row.chan,row.date), p=prodOf(row.prod);
+  const ot=(row.ot||[0,0,0]).map(n), cod=(row.cod||[0,0,0]).map(n);
+  const purchase=ot.concat(cod).reduce((a,b)=>a+b,0);
+  if(!r||!p) return {err:true,purchase,qty:0,sales:0,ads:n(row.ads),net:0,clicks:n(row.clicks),freePatch:0,freeKayu:0};
+  const S3=(a,b)=>a.reduce((s,v,i)=>s+v*n(b[i]),0);
+  const u=p.units, ads=n(row.ads);
+  const qty=S3(ot,u)+S3(cod,u);
+  const freePatch=S3(ot,r.patchOT)+S3(cod,r.patchCOD);
+  const freeKayu=S3(ot,r.kayuOT)+S3(cod,r.kayuCOD);
+  const patchSales=n(row.patch)*n(r.patchPrice);
+  const sales=S3(ot,r.ot)+S3(cod,r.cod)+patchSales-n(row.freePost);
+  const taxAds=ads*n(S.settings.taxAd);
+  const shipOT=S3(ot,r.posOT), shipCOD=S3(cod,r.posCOD);
+  const taxShipOT=shipOT*n(S.settings.taxShip), taxShipCOD=shipCOD*n(S.settings.taxShip);
+  const cost=qty*n(r.cost), gift=freePatch*n(p.patchCost)+freeKayu*n(p.kayuCost);
+  const other=n(row.special)+n(row.openai)+n(row.sabah);
+  const net=sales-ads-taxAds-shipOT-shipCOD-taxShipOT-taxShipCOD-cost-gift-other;
+  return {err:false,rate:r,purchase,qty,freePatch,freeKayu,patchSales,sales,ads,taxAds,shipOT,shipCOD,taxShipOT,taxShipCOD,cost,gift,other,
+    special:n(row.special),openai:n(row.openai),sabah:n(row.sabah),freePost:n(row.freePost),net,clicks:n(row.clicks),
+    roas:ads?sales/ads:0,roasTax:ads?sales/(ads+taxAds):0,cpp:ads&&purchase?ads/purchase:0,conv:n(row.clicks)?purchase/n(row.clicks):0};
+}
+function retValue(rt){const p=prodOf(rt.prod);return n(rt.count)*n(p?.ret?.[rt.pk]??0)+n(rt.special)}
+function collect(field,map){
+  const out=[];
+  for(const m of Object.values(S.months)) for(const [k,r] of Object.entries(m[field]||{})) if(r&&r.date) out.push(map(k,r));
+  return out.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+}
+const allRows=()=>collect("rows",(k,r)=>({key:k,...r,c:calc(r)}));
+const allReturns=()=>collect("returns",(k,r)=>({id:k,...r,v:retValue(r)}));
+const allExp=()=>collect("expenses",(k,r)=>({id:k,...r}));
+const allAdj=()=>collect("stockAdj",(k,r)=>({id:k,...r}));
+function agg(rows){
+  const a={sales:0,ads:0,taxAds:0,net:0,purchase:0,qty:0,clicks:0,pc:0,ship:0,cost:0,other:0,n:0};
+  for(const r of rows){const c=r.c;a.sales+=c.sales;a.ads+=c.ads;a.taxAds+=c.taxAds||0;a.net+=c.net;a.purchase+=c.purchase;a.qty+=c.qty;a.clicks+=c.clicks;if(c.clicks)a.pc+=c.purchase;
+    a.ship+=(c.shipOT||0)+(c.shipCOD||0)+(c.taxShipOT||0)+(c.taxShipCOD||0);a.cost+=(c.cost||0)+(c.gift||0);a.other+=c.other||0;a.n++}
+  return a;
+}
+function expAgg(list){let op=0,stock=0;for(const e of list){if(e.cat===STOK)stock+=n(e.amount);else op+=n(e.amount)}return {op,stock}}
+
+/* ---------- stok ---------- */
+function usageOf(row,c,item){
+  if(item===row.prod) return c.qty||0;
+  if(item==="HALIA PATCH") return (c.freePatch||0)+(c.err?0:n(row.patch));
+  if(item==="KAYU") return c.freeKayu||0;
+  return 0;
+}
+function stockStat(item,rows,exps,adjs){
+  const od=item.openingDate||(S.settings.year+"-01-01");
+  rows=rows||allRows();exps=exps||allExp();adjs=adjs||allAdj();
+  const buys=exps.filter(e=>e.cat===STOK&&e.item===item.name&&e.date>=od);
+  const adj=adjs.filter(a=>a.item===item.name&&a.date>=od);
+  let used=0,used30=0;const last=rows.length?rows[rows.length-1].date:todayISO();
+  const d30=new Date(last+"T00:00:00");d30.setDate(d30.getDate()-29);const from30=iso(d30);
+  for(const r of rows){if(r.date<od)continue;const u=usageOf(r,r.c,item.name);used+=u;if(r.date>=from30)used30+=u}
+  const bought=buys.reduce((s,e)=>s+n(e.qty),0), adjQ=adj.reduce((s,a)=>s+n(a.qty),0);
+  const bal=n(item.opening)+bought+adjQ-used;
+  const lastBuy=buys.filter(e=>n(e.qty)).pop();const unit=lastBuy?n(lastBuy.amount)/n(lastBuy.qty):0;
+  const perDay=used30/30;const days=perDay>0?Math.max(0,bal)/perDay:null;
+  const unset=!n(item.opening)&&!bought&&!adjQ;
+  const status=unset?"unset":bal<=0?"out":bal<=n(item.min)?"low":"ok";
+  return {od,bought,adjQ,used,bal,unit,value:Math.max(0,bal)*unit,perDay,days,status,buys,adj};
+}
+
+/* ---------- db ---------- */
+const FIELDS=["rows","returns","expenses","stockAdj"];
+let writeQ=Promise.resolve();
+function queue(fn){writeQ=writeQ.then(fn).catch(e=>{console.error(e);toast(e&&e.code==="quota_exceeded"?"Storan penuh. Padam data lama dulu.":"Gagal simpan. Semak sambungan dan cuba lagi.");setStatus("err")});return writeQ}
+function blankMonth(){return {rows:{},returns:{},expenses:{},stockAdj:{}}}
+function writeMonth(mk,patch){
+  return queue(async()=>{
+    const ref=S.db.doc("months/"+mk);
+    const snap=await ref.get();
+    if(snap.exists) await ref.update(patch);
+    else{const c=blankMonth();for(const f of FIELDS) for(const [k,v] of Object.entries(patch[f]||{})) if(v) c[f][k]=v;await ref.set(c)}
+    setStatus("ok");
+  });
+}
+function localPut(mk,field,key,val){S.months[mk]=S.months[mk]||blankMonth();const o={...(S.months[mk][field]||{})};if(val)o[key]=val;else delete o[key];S.months[mk][field]=o}
+let setT;function saveSettings(){clearTimeout(setT);setStatus("wait");setT=setTimeout(()=>queue(async()=>{await S.db.doc("settings/main").set(JSON.parse(JSON.stringify(S.settings)));setStatus("ok");toast("Tetapan disimpan")}),700)}
+function setStatus(s){const d=$("dot"),t=$("statusTxt");d.className="dot"+(s==="ok"?"":s==="wait"?" wait":" off");t.textContent=s==="ok"?"Tersimpan":s==="wait"?"Menyimpan…":s==="off"?"Luar talian":"Ralat simpan"}
+
+/* ---------- tabs ---------- */
+function renderTabs(){
+  $("tabsTop").innerHTML=TABS.map(([k,l])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':""}>${l}</button>`).join("");
+  $("tabsBottom").innerHTML=TABS.map(([k,l])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':""}>${ICONS[k]}<span>${l}</span></button>`).join("");
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b){S.tab=b.dataset.tab;S.confirmDel=null;try{location.hash=S.tab}catch(_){}render();window.scrollTo(0,0)}});
+function render(){
+  renderTabs();
+  if(S.auth){renderLogin();return}
+  if(!S.db){$("main").innerHTML=`<div class="empty">Tak dapat sambung ke server. Semak internet dan muat semula halaman.</div>`;return}
+  if(!S.loadedS||!S.loadedM){$("main").innerHTML=`<div class="empty">Memuatkan data jualan, belanja dan stok…</div>`;return}
+  if(!S.settings){$("main").innerHTML=`<div class="empty">Tetapan harga belum ada. Upload fail data/ yang disediakan bersama app ini.</div>`;return}
+  ({isi:renderIsi,belanja:renderBelanja,stok:renderStok,laporan:renderLaporan,tetapan:renderTetapan})[S.tab]();
+}
+const monthChips=(sel,attr,has)=>`<div class="chips">${BLN.map((b,i)=>`<button class="chip ${has&&has[i]?"has":""}" ${attr}="${i+1}" aria-pressed="${sel===i+1}">${b}</button>`).join("")}<button class="chip" ${attr}="0" aria-pressed="${sel===0}">Setahun</button></div>`;
+
+/* ================= ISI HARIAN ================= */
+function blankForm(date,prod,chan){return {date,prod,chan,ot:[0,0,0],cod:[0,0,0],patch:0,ads:0,clicks:0,freePost:0,special:0,openai:0,sabah:0,note:""}}
+function findRow(date,prod,chan){const k=date+"__"+slug(prod)+"__"+slug(chan);const r=S.months[mkOf(date)]?.rows?.[k];return r?{...r,ot:[...r.ot],cod:[...r.cod]}:null}
+function loadForm(date,prod,chan){const ex=findRow(date,prod,chan);S.form=ex||blankForm(date,prod,chan);S.form._exists=!!ex;S.dirty=false;S.confirmDel=null}
+function ensureForm(){
+  if(S.form) return;
+  const st=S.settings;const all=allRows();const last=all.length?all[all.length-1].date:todayISO();
+  const t=todayISO();loadForm(t.slice(0,4)==String(st.year)?t:last,st.products[0]?.name||"",st.channels[0]||"");
+}
+function renderIsi(){
+  ensureForm();
+  const f=S.form,st=S.settings,p=prodOf(f.prod),r=rateFor(f.prod,f.chan,f.date);
+  const dayRows=allRows().filter(x=>x.date===f.date);
+  const has=(pr,ch)=>dayRows.some(x=>x.prod===pr&&(ch==null||x.chan===ch));
+  const pk=p?p.pk:["TRIAL","JIMAT","SEMBUH"];
+  const stepper=(grp,i)=>`<div class="step"><span title="${esc(pk[i])}">${esc(pk[i])}</span>
+    <div class="ctl"><button type="button" data-step="${grp}:${i}:-1" aria-label="Kurang ${esc(pk[i])}">−</button>
+    <input id="${grp}${i}" type="number" inputmode="numeric" min="0" step="1" value="${f[grp][i]||""}" placeholder="0" data-arr="${grp}:${i}">
+    <button type="button" data-step="${grp}:${i}:1" aria-label="Tambah ${esc(pk[i])}">+</button></div>
+    <small class="num">${r?"RM"+n(r[grp][i]):"–"}</small></div>`;
+  const fld=(k,l,ph="0")=>`<label class="f">${l}<input id="f_${k}" type="number" inputmode="decimal" min="0" step="any" value="${f[k]||""}" placeholder="${ph}" data-k="${k}"></label>`;
+  const day=agg(dayRows);
+  $("main").innerHTML=`
+  <div class="row between"><div><div class="eyebrow">Isi harian</div><h2>${dayName(f.date)}, ${fmtDate(f.date)}</h2></div>
+    <div class="row"><button class="icon-btn" data-day="-1" aria-label="Hari sebelum">‹</button>
+    <input id="fdate" type="date" value="${f.date}" style="width:auto">
+    <button class="icon-btn" data-day="1" aria-label="Hari seterusnya">›</button></div></div>
+  <div class="split">
+   <div style="display:grid;gap:14px;min-width:0">
+    <div class="card">
+      <div class="eyebrow">Produk</div>
+      <div class="chips">${st.products.map(x=>`<button class="chip ${has(x.name)?"has":""}" data-prod="${esc(x.name)}" aria-pressed="${x.name===f.prod}">${esc(x.name)}</button>`).join("")}</div>
+      <div class="eyebrow">Saluran</div>
+      <div class="chips">${st.channels.map(c=>`<button class="chip ${has(f.prod,c)?"has":""}" data-chan="${esc(c)}" aria-pressed="${c===f.chan}">${esc(c)}</button>`).join("")}</div>
+      ${r?"":`<div class="warn">Tiada harga untuk ${esc(f.prod)} · ${esc(f.chan)} pada tarikh ini. Tambah kadar di Tetapan dulu.</div>`}
+    </div>
+    <div class="card">
+      <div class="pay"><div class="row between"><h3>Online Transfer</h3><span class="note">bil. pakej</span></div>
+        <div class="grid3">${[0,1,2].map(i=>stepper("ot",i)).join("")}</div></div>
+      <div class="pay"><div class="row between"><h3>COD</h3><span class="note">bil. pakej</span></div>
+        <div class="grid3">${[0,1,2].map(i=>stepper("cod",i)).join("")}</div></div>
+    </div>
+    <div class="card">
+      <h3>Iklan</h3>
+      <div class="grid2">${fld("ads","FB Ads (RM)","0.00")}${fld("clicks","Link click")}</div>
+      <details ${f.patch||f.freePost||f.special||f.openai||f.sabah||f.note?"open":""}><summary>Lain-lain (jika ada)</summary>
+        <div class="grid2" style="margin-top:10px">
+          ${r&&n(r.patchPrice)?fld("patch","Halia patch dijual (pcs)"):""}
+          ${fld("freePost","Free postage (RM)")}${fld("special","Special discount / order (RM)")}
+          ${fld("openai","Open AI cost (RM)")}${fld("sabah","Sabah / Sarawak (RM)")}
+        </div>
+        <label class="f" style="margin-top:10px">Catatan<input id="f_note" type="text" value="${esc(f.note)}" data-k="note"></label>
+      </details>
+    </div>
+   </div>
+   <div style="display:grid;gap:14px;min-width:0" class="sticky">
+    <div class="card" id="pv"></div>
+    <div class="card">
+      <div class="row between"><h3>Semua rekod hari ini</h3><span class="pill ${day.net<0?"bad":day.n?"good":""}">${day.n?rm(day.net):"tiada"}</span></div>
+      <div class="list">${dayRows.length?dayRows.map(x=>`
+        <button class="item ${x.prod===f.prod&&x.chan===f.chan?"on":""}" data-open="${esc(x.prod)}|${esc(x.chan)}">
+          <span><b>${esc(x.prod)}</b> · ${esc(x.chan)}<br><span class="sub num">${x.c.purchase} pakej · ${rm(x.c.sales)} · ads ${rm(x.c.ads)}</span></span>
+          <span class="num ${x.c.net<0?"bad":"good"}">${x.c.err?"semak harga":rm(x.c.net)}</span></button>`).join(""):`<div class="note">Belum ada rekod untuk ${fmtDate(f.date)}. Pilih produk & saluran, isi bilangan pakej, kemudian tekan Simpan.</div>`}</div>
+    </div>
+   </div>
+  </div>`;
+  renderPreview();
+}
+function renderPreview(){
+  const f=S.form,c=calc(f),el=$("pv");if(!el)return;
+  const line=(l,v,neg)=>v?`<div class="${neg?"neg":""}"><span>${l}</span><span class="num">${neg?"−":""}${rm(Math.abs(v))}</span></div>`:"";
+  const del=S.confirmDel==="row";
+  const it=(S.settings.stock||[]).find(s=>s.name===f.prod);const ss=it?stockStat(it):null;
+  el.innerHTML=`<div class="row between"><div><div class="eyebrow">${esc(f.prod)} · ${esc(f.chan)}</div><h3>Untung jualan</h3></div>
+     <span class="pill">${f._exists?(S.dirty?"belum simpan":"tersimpan"):"rekod baru"}</span></div>
+    <div class="big ${c.net<0?"bad":"good"}">${rm(c.net)}</div>
+    <div class="row note"><span class="num">${c.purchase} pakej</span>·<span class="num">${c.qty} pcs</span>·<span>ROAS <b class="num">${x2(c.roas)}</b></span>${c.cpp?`·<span>CPP <b class="num">${rm(c.cpp)}</b></span>`:""}${c.conv?`·<span>Conv <b class="num">${pct(c.conv)}</b></span>`:""}</div>
+    ${c.err?`<div class="warn">Harga tak dijumpai, jadi tak boleh kira.</div>`:`<div class="ledger">
+      ${line("Sales",c.sales+c.freePost)}${line("Free postage",c.freePost,1)}${line("FB Ads",c.ads,1)}${line("Cukai ads",c.taxAds,1)}
+      ${line("Shipping online",c.shipOT,1)}${line("Shipping COD",c.shipCOD,1)}${line("Cukai shipping",c.taxShipOT+c.taxShipCOD,1)}
+      ${line("Cost product",c.cost,1)}${line(`Free gift (${c.freePatch} patch${c.freeKayu?`, ${c.freeKayu} kayu`:""})`,c.gift,1)}
+      ${line("Special discount/order",c.special,1)}${line("Open AI",c.openai,1)}${line("Sabah/Sarawak",c.sabah,1)}</div>`}
+    ${ss?`<div class="row between note"><span>Baki stok ${esc(f.prod)}</span><span class="pill ${({ok:"good",low:"warn",out:"bad",unset:""})[ss.status]}">${ss.status==="unset"?"belum set":int(ss.bal)+" pcs"}</span></div>`:""}
+    <div class="row">
+      <button class="btn pri" id="saveBtn" ${c.err?"disabled":""} style="flex:1">${f._exists?"Kemas kini":"Simpan"}</button>
+      ${f._exists?(del?`<button class="btn danger" id="delYes">Padam</button><button class="btn ghost" id="delNo">Batal</button>`:`<button class="btn ghost" id="delBtn">Padam</button>`):""}
+    </div>`;
+}
+function clean(f){const o={date:f.date,prod:f.prod,chan:f.chan,ot:f.ot.map(n),cod:f.cod.map(n)};for(const k of ["patch","ads","clicks","freePost","special","openai","sabah"])o[k]=n(f[k]);o.note=f.note||"";return o}
+function hasData(o){return o.ot.some(v=>v)||o.cod.some(v=>v)||["patch","ads","clicks","freePost","special","openai","sabah"].some(k=>o[k])}
+async function saveForm(){
+  const o=clean(S.form);if(!hasData(o)){toast("Isi sekurang-kurangnya satu nombor dulu.");return}
+  const k=keyOf(o),mk=mkOf(o.date);localPut(mk,"rows",k,o);
+  S.form._exists=true;S.dirty=false;setStatus("wait");renderIsi();
+  await writeMonth(mk,{rows:{[k]:o}});toast("Disimpan · "+o.prod+" "+o.chan);
+}
+async function deleteForm(){
+  const o=S.form,k=keyOf(o),mk=mkOf(o.date);localPut(mk,"rows",k,null);
+  loadForm(o.date,o.prod,o.chan);setStatus("wait");renderIsi();
+  await writeMonth(mk,{rows:{[k]:null}});toast("Rekod dipadam");
+}
+document.addEventListener("click",e=>{
+  if(S.tab!=="isi"||!S.form)return;const t=e.target;let b;
+  if(b=t.closest("[data-prod]")){loadForm(S.form.date,b.dataset.prod,S.form.chan);renderIsi()}
+  else if(b=t.closest("[data-chan]")){loadForm(S.form.date,S.form.prod,b.dataset.chan);renderIsi()}
+  else if(b=t.closest("[data-open]")){const [p,c]=b.dataset.open.split("|");loadForm(S.form.date,p,c);renderIsi()}
+  else if(b=t.closest("[data-day]")){const d=new Date(S.form.date+"T00:00:00");d.setDate(d.getDate()+ +b.dataset.day);loadForm(iso(d),S.form.prod,S.form.chan);renderIsi()}
+  else if(b=t.closest("[data-step]")){const [g,i,dv]=b.dataset.step.split(":");const v=Math.max(0,n(S.form[g][i])+ +dv);S.form[g][i]=v;$(g+i).value=v||"";S.dirty=true;renderPreview()}
+  else if(t.id==="saveBtn")saveForm();
+  else if(t.id==="delBtn"){S.confirmDel="row";renderPreview()}
+  else if(t.id==="delNo"){S.confirmDel=null;renderPreview()}
+  else if(t.id==="delYes")deleteForm();
+});
+document.addEventListener("input",e=>{
+  if(S.tab!=="isi"||!S.form)return;const t=e.target;
+  if(t.dataset.arr){const [g,i]=t.dataset.arr.split(":");S.form[g][i]=Math.max(0,n(t.value));S.dirty=true;renderPreview()}
+  else if(t.dataset.k){S.form[t.dataset.k]=t.dataset.k==="note"?t.value:n(t.value);S.dirty=true;renderPreview()}
+});
+document.addEventListener("change",e=>{if(S.tab==="isi"&&e.target.id==="fdate"&&e.target.value){loadForm(e.target.value,S.form.prod,S.form.chan);renderIsi()}});
+
+/* ================= BELANJA & RETURN ================= */
+function renderBelanja(){
+  const st=S.settings;
+  const top=`<div class="row between"><div><div class="eyebrow">Belanja</div><h2>${S.expSub==="exp"?"Belanja & beli stok":"Rekod return"}</h2></div>
+    <div class="seg"><button data-sub="exp" aria-pressed="${S.expSub==="exp"}">Belanja</button><button data-sub="ret" aria-pressed="${S.expSub==="ret"}">Return</button></div></div>`;
+  if(S.expSub==="ret"){$("main").innerHTML=top+returnHTML();return}
+  const ef=S.expForm||(S.expForm={date:todayISO(),cat:st.expenseCats.find(c=>c!==STOK)||STOK,desc:"",amount:0,item:st.stock[0]?.name||"",qty:0});
+  const yr=String(st.year),m=S.expMonth;
+  const exps=allExp().filter(e=>m?e.date.startsWith(yr+"-"+String(m).padStart(2,"0")):e.date.startsWith(yr)).reverse();
+  const hasM=BLN.map((_,i)=>allExp().some(e=>e.date.startsWith(yr+"-"+String(i+1).padStart(2,"0"))));
+  const ea=expAgg(exps);
+  const byCat={};exps.forEach(e=>byCat[e.cat]=(byCat[e.cat]||0)+n(e.amount));
+  const maxCat=Math.max(1,...Object.values(byCat));
+  const isStock=ef.cat===STOK;
+  $("main").innerHTML=top+`
+  <div class="split">
+    <div class="card">
+      <div class="grid2"><label class="f">Tarikh<input id="e_date" type="date" value="${ef.date}"></label>
+      <label class="f">Jumlah (RM)<input id="e_amount" type="number" inputmode="decimal" min="0" step="any" value="${ef.amount||""}" placeholder="0.00"></label></div>
+      <div class="eyebrow">Kategori</div>
+      <div class="chips">${st.expenseCats.map(c=>`<button class="chip" data-ecat="${esc(c)}" aria-pressed="${c===ef.cat}">${esc(c)}</button>`).join("")}</div>
+      ${isStock?`<div class="grid2"><label class="f">Item stok<select id="e_item">${st.stock.map(s=>`<option ${s.name===ef.item?"selected":""}>${esc(s.name)}</option>`).join("")}</select></label>
+        <label class="f">Kuantiti masuk (pcs)<input id="e_qty" type="number" inputmode="numeric" min="0" value="${ef.qty||""}" placeholder="0"></label></div>
+        <div class="note" id="e_unit">${ef.qty&&ef.amount?"Harga seunit "+rm(ef.amount/ef.qty):"Kuantiti ini akan ditambah ke baki stok."}</div>`:""}
+      <label class="f">Keterangan<input id="e_desc" type="text" value="${esc(ef.desc)}" placeholder="${isStock?"cth. Kilang ABC, batch Nov":"cth. Gaji packer November"}"></label>
+      <div class="row between"><span class="note">${isStock?"Beli stok tak ditolak terus dari profit. Kos dikira bila barang dijual (cost product).":"Belanja ini ditolak dari net profit bulan itu."}</span>
+        <button class="btn pri" id="e_add">Tambah ${isStock?"stok":"belanja"}</button></div>
+    </div>
+    <div class="card">
+      <div class="row between"><h3>${m?BULAN[m-1]:"Setahun "+yr}</h3><span class="pill bad">${rm(ea.op+ea.stock)}</span></div>
+      <div class="grid2"><div><div class="eyebrow">Belanja operasi</div><div class="num" style="font-size:18px;font-weight:600">${rm(ea.op)}</div></div>
+        <div><div class="eyebrow">Beli stok</div><div class="num" style="font-size:18px;font-weight:600">${rm(ea.stock)}</div></div></div>
+      ${Object.keys(byCat).length?Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<div class="hbar"><span>${esc(c)}</span><span class="track"><span class="fill" style="width:${v/maxCat*100}%;${c===STOK?"background:var(--sky)":""}"></span></span><span class="num">${rm(v)}</span></div>`).join(""):'<div class="note">Belum ada belanja untuk tempoh ini.</div>'}
+    </div>
+  </div>
+  ${monthChips(m,"data-em",hasM)}
+  <div class="list">${exps.length?exps.map(e=>`<div class="item">
+     <span><b>${esc(e.cat)}</b>${e.cat===STOK?` · ${esc(e.item)} +${int(n(e.qty))} pcs`:""}${e.desc?` · ${esc(e.desc)}`:""}<br><span class="sub">${fmtDate(e.date)}</span></span>
+     <span class="row"><span class="num bad">${rm(n(e.amount))}</span>${S.confirmDel===e.id?`<button class="btn danger sm" data-edel="${e.id}">Padam</button><button class="btn ghost sm" data-eno="1">Batal</button>`:`<button class="btn ghost sm" data-eask="${e.id}" aria-label="Padam belanja">×</button>`}</span></div>`).join(""):`<div class="empty">Tiada belanja direkod untuk ${m?BULAN[m-1]:"tahun ini"}. Isi borang di atas untuk tambah.</div>`}</div>`;
+}
+function returnHTML(){
+  const st=S.settings;const rf=S.retForm||(S.retForm={date:S.form?.date||todayISO(),prod:st.products[0]?.name||"",pk:0,count:1,special:0,note:""});
+  const p=prodOf(rf.prod);const rets=allReturns().slice().reverse();
+  return `<div class="split">
+    <div class="card">
+      <div class="grid2"><label class="f">Tarikh<input id="r_date" type="date" value="${rf.date}"></label>
+      <label class="f">Produk<select id="r_prod">${st.products.map(x=>`<option ${x.name===rf.prod?"selected":""}>${esc(x.name)}</option>`).join("")}</select></label></div>
+      <div class="eyebrow">Pakej</div>
+      <div class="chips">${(p?.pk||[]).map((x,i)=>`<button class="chip" data-rpk="${i}" aria-pressed="${rf.pk===i}">${esc(x)} <span class="num">RM${n(p.ret[i])}</span></button>`).join("")}</div>
+      <div class="grid2"><label class="f">Bilangan<input id="r_count" type="number" inputmode="numeric" min="0" value="${rf.count||""}"></label>
+      <label class="f">Special order (RM)<input id="r_special" type="number" inputmode="decimal" min="0" step="any" value="${rf.special||""}"></label></div>
+      <label class="f">Catatan<input id="r_note" type="text" value="${esc(rf.note)}"></label>
+      <div class="row between"><span>Nilai return <b class="num bad" id="r_val">${rm(retValue(rf))}</b></span><button class="btn pri" id="r_add">Tambah return</button></div>
+      <div class="note">Nilai seunit ikut Tetapan → Produk. Nilai return ditolak dari net profit bulan itu.</div>
+    </div>
+    <div class="card"><h3>Senarai return</h3><div class="list">${rets.length?rets.map(r=>`<div class="item">
+      <span><b>${esc(r.prod)}</b> · ${esc((prodOf(r.prod)?.pk||[])[r.pk]||"")} × ${r.count}<br><span class="sub">${fmtDate(r.date)}${r.note?" · "+esc(r.note):""}</span></span>
+      <span class="row"><span class="num bad">${rm(r.v)}</span>${S.confirmDel===r.id?`<button class="btn danger sm" data-rdel="${r.id}">Padam</button><button class="btn ghost sm" data-rno="1">Batal</button>`:`<button class="btn ghost sm" data-rask="${r.id}" aria-label="Padam return">×</button>`}</span></div>`).join(""):`<div class="note">Belum ada return direkod.</div>`}</div></div>
+  </div>`;
+}
+document.addEventListener("input",e=>{if(S.tab!=="belanja")return;const t=e.target;
+  if(S.expSub==="exp"&&S.expForm){const ef=S.expForm;
+    if(t.id==="e_amount")ef.amount=n(t.value);else if(t.id==="e_qty")ef.qty=n(t.value);else if(t.id==="e_desc")ef.desc=t.value;else return;
+    const u=$("e_unit");if(u)u.textContent=ef.qty&&ef.amount?"Harga seunit "+rm(ef.amount/ef.qty):"Kuantiti ini akan ditambah ke baki stok."}
+  else if(S.retForm){const rf=S.retForm;
+    if(t.id==="r_count")rf.count=n(t.value);else if(t.id==="r_special")rf.special=n(t.value);else if(t.id==="r_note")rf.note=t.value;else return;
+    $("r_val").textContent=rm(retValue(rf))}});
+document.addEventListener("change",e=>{if(S.tab!=="belanja")return;const t=e.target;
+  if(t.id==="e_date")S.expForm.date=t.value;else if(t.id==="e_item")S.expForm.item=t.value;
+  else if(t.id==="r_date")S.retForm.date=t.value;else if(t.id==="r_prod"){S.retForm.prod=t.value;renderBelanja()}});
+document.addEventListener("click",async e=>{if(S.tab!=="belanja")return;const t=e.target;let b;
+  if(b=t.closest("[data-sub]")){S.expSub=b.dataset.sub;S.confirmDel=null;renderBelanja()}
+  else if(b=t.closest("[data-ecat]")){S.expForm.cat=b.dataset.ecat;renderBelanja()}
+  else if(b=t.closest("[data-em]")){S.expMonth=+b.dataset.em;renderBelanja()}
+  else if(b=t.closest("[data-eask]")){S.confirmDel=b.dataset.eask;renderBelanja()}
+  else if(b=t.closest("[data-eno]")){S.confirmDel=null;renderBelanja()}
+  else if(b=t.closest("[data-edel]")){const ex=allExp().find(x=>x.id===b.dataset.edel);if(!ex)return;const mk=mkOf(ex.date);
+    localPut(mk,"expenses",ex.id,null);S.confirmDel=null;renderBelanja();setStatus("wait");await writeMonth(mk,{expenses:{[ex.id]:null}});toast("Belanja dipadam")}
+  else if(t.id==="e_add"){const ef=S.expForm;const isStock=ef.cat===STOK;
+    if(!ef.date||!ef.amount&&!(isStock&&ef.qty)){toast("Isi tarikh dan jumlah RM dulu.");return}
+    if(isStock&&!ef.qty){toast("Isi kuantiti stok yang masuk.");return}
+    const id=uid("e");const o={date:ef.date,cat:ef.cat,desc:ef.desc||"",amount:n(ef.amount)};if(isStock){o.item=ef.item;o.qty=n(ef.qty)}
+    const mk=mkOf(o.date);localPut(mk,"expenses",id,o);S.expForm={...ef,desc:"",amount:0,qty:0};renderBelanja();setStatus("wait");
+    await writeMonth(mk,{expenses:{[id]:o}});toast(isStock?`Stok ${o.item} +${int(o.qty)} pcs ditambah`:"Belanja ditambah")}
+  else if(b=t.closest("[data-rpk]")){S.retForm.pk=+b.dataset.rpk;renderBelanja()}
+  else if(b=t.closest("[data-rask]")){S.confirmDel=b.dataset.rask;renderBelanja()}
+  else if(b=t.closest("[data-rno]")){S.confirmDel=null;renderBelanja()}
+  else if(b=t.closest("[data-rdel]")){const r=allReturns().find(x=>x.id===b.dataset.rdel);if(!r)return;const mk=mkOf(r.date);
+    localPut(mk,"returns",r.id,null);S.confirmDel=null;renderBelanja();setStatus("wait");await writeMonth(mk,{returns:{[r.id]:null}});toast("Return dipadam")}
+  else if(t.id==="r_add"){const rf=S.retForm;if(!rf.date||!rf.count&&!rf.special){toast("Isi tarikh dan bilangan.");return}
+    const id=uid("t");const o={date:rf.date,prod:rf.prod,pk:rf.pk,count:n(rf.count),special:n(rf.special),note:rf.note||""};
+    const mk=mkOf(o.date);localPut(mk,"returns",id,o);S.retForm={...rf,count:1,special:0,note:""};renderBelanja();setStatus("wait");
+    await writeMonth(mk,{returns:{[id]:o}});toast("Return ditambah")}
+});
+
+/* ================= STOK ================= */
+function renderStok(){
+  const st=S.settings,rows=allRows(),exps=allExp(),adjs=allAdj();
+  const stats=st.stock.map(it=>({it,s:stockStat(it,rows,exps,adjs)}));
+  const sel=stats.find(x=>x.it.name===S.stockSel)||stats[0];
+  const af=S.adjForm||(S.adjForm={date:todayISO(),qty:0,note:""});
+  const totalVal=stats.reduce((a,x)=>a+x.s.value,0);
+  const alerts=stats.filter(x=>x.s.status==="low"||x.s.status==="out");const unsetN=stats.filter(x=>x.s.status==="unset").length;
+  let hist=[];
+  if(sel){const s=sel.s,name=sel.it.name;
+    hist.push({date:s.od,t:"Stok awal",q:n(sel.it.opening)});
+    s.buys.forEach(e=>hist.push({date:e.date,t:"Beli stok"+(e.desc?" · "+e.desc:""),q:n(e.qty),rm:n(e.amount)}));
+    s.adj.forEach(a=>hist.push({date:a.date,t:"Pelarasan"+(a.note?" · "+a.note:""),q:n(a.qty),id:a.id}));
+    const byM={};rows.forEach(r=>{if(r.date<s.od)return;const u=usageOf(r,r.c,name);if(u){const k=mkOf(r.date);byM[k]=(byM[k]||0)+u}});
+    Object.entries(byM).forEach(([k,v])=>{const [y,mm]=k.split("-");const last=new Date(+y,+mm,0).getDate();hist.push({date:k+"-"+String(last).padStart(2,"0"),t:"Terjual / guna · "+BULAN[+mm-1],q:-v})});
+    hist.sort((a,b)=>a.date<b.date?1:-1);
+  }
+  const pctOf=s=>Math.max(0,Math.min(100,s.bal/Math.max(1,Math.max(s.bal,n(sel?.it.min)*3))*100));
+  $("main").innerHTML=`<div class="row between"><div><div class="eyebrow">Stok</div><h2>Baki stok semasa</h2></div>
+    <button class="btn teal sm" id="goBuy">+ Beli stok</button></div>
+  ${unsetN?`<div class="info">${unsetN} item belum ada stok awal. Pilih item, kira stok fizikal, kemudian isi <b>Stok awal</b> dan tarikh kiraan di bawah.</div>`:""}
+  ${alerts.length?`<div class="warn"><b>Perhatian:</b> ${alerts.map(x=>`${esc(x.it.name)} ${x.s.status==="out"?"habis":"tinggal "+int(x.s.bal)+" pcs"}`).join(" · ")}</div>`:""}
+  <div class="stocks">${stats.map(({it,s})=>`<button class="stock ${s.status==="ok"?"":s.status} ${sel&&sel.it.name===it.name?"on":""}" data-ssel="${esc(it.name)}">
+      <span class="row between"><b>${esc(it.name)}</b><span class="pill ${({ok:"good",low:"warn",out:"bad",unset:""})[s.status]}">${({ok:"Cukup",low:"Rendah",out:"Habis",unset:"Belum set"})[s.status]}</span></span>
+      <span class="q ${s.bal<0&&s.status!=="unset"?"bad":""}">${s.status==="unset"?"–":int(s.bal)} <span class="note">pcs</span></span>
+      <span class="meter"><i style="width:${Math.max(0,Math.min(100,s.bal/Math.max(1,n(it.min)*4)*100))}%"></i></span>
+      <span class="note num">Masuk ${int(s.bought)} · Keluar ${int(s.used)}${s.adjQ?` · Laras ${s.adjQ>0?"+":""}${int(s.adjQ)}`:""}</span>
+      <span class="note">${s.status==="unset"?`Terjual ${int(s.used)} pcs setakat ini. Isi stok awal untuk mula jejak.`:s.bal<=0?"Stok habis. Rekod beli stok atau semak stok awal.":s.days!=null?`Cukup lebih kurang <b>${Math.floor(s.days)} hari</b> (guna ${s.perDay.toFixed(1)}/hari)`:"Tiada penggunaan 30 hari lepas"}${s.unit?` · Nilai ${rm(s.value)}`:""}</span>
+    </button>`).join("")}</div>
+  <div class="note">Nilai stok anggaran (ikut harga beli terakhir): <b class="num">${rm(totalVal)}</b>. Keluar = pcs terjual + free gift dari rekod jualan sejak tarikh stok awal.</div>
+  ${sel?`<div class="split">
+    <div class="card">
+      <h3>${esc(sel.it.name)}</h3>
+      <div class="grid3 wrap">
+        <label class="f">Stok awal (pcs)<input type="number" min="0" value="${n(sel.it.opening)}" data-stk="opening"></label>
+        <label class="f">Tarikh stok awal<input type="date" value="${sel.s.od}" data-stk="openingDate"></label>
+        <label class="f">Amaran bila tinggal (pcs)<input type="number" min="0" value="${n(sel.it.min)}" data-stk="min"></label></div>
+      <div class="note">Kira stok fizikal sekali, isi sebagai stok awal dengan tarikh kiraan. Jualan sebelum tarikh itu tak ditolak.</div>
+      <h3 style="margin-top:6px">Pelarasan stok</h3>
+      <div class="grid3 wrap"><label class="f">Tarikh<input id="a_date" type="date" value="${af.date}"></label>
+        <label class="f">Kuantiti (+/−)<input id="a_qty" type="number" step="1" value="${af.qty||""}" placeholder="cth. -5"></label>
+        <label class="f">Sebab<input id="a_note" type="text" value="${esc(af.note)}" placeholder="rosak / hilang / kiraan"></label></div>
+      <div><button class="btn ghost" id="a_add">Simpan pelarasan</button></div>
+    </div>
+    <div class="card"><h3>Pergerakan stok</h3><div class="list">${hist.map(h=>`<div class="item"><span>${esc(h.t)}<br><span class="sub">${fmtDate(h.date)}${h.rm?" · "+rm(h.rm):""}</span></span>
+      <span class="row"><b class="num ${h.q<0?"bad":"good"}">${h.q>0?"+":""}${int(h.q)}</b>${h.id?(S.confirmDel===h.id?`<button class="btn danger sm" data-adel="${h.id}">Padam</button>`:`<button class="btn ghost sm" data-aask="${h.id}" aria-label="Padam pelarasan">×</button>`):""}</span></div>`).join("")}</div></div>
+  </div>`:""}
+  <div class="card"><h3>Tambah item stok lain</h3><div class="row"><input type="text" id="newItem" placeholder="cth. BOTOL, KOTAK, STICKER" style="flex:1"><button class="btn sm" id="addItem">Tambah item</button></div>
+    <div class="note">Item yang sama nama dengan produk ditolak ikut pcs terjual. HALIA PATCH ditolak ikut free patch + patch dijual, KAYU ikut free kayu. Item lain hanya ikut beli stok & pelarasan.</div></div>`;
+}
+document.addEventListener("click",async e=>{if(S.tab!=="stok")return;const t=e.target,st=S.settings;let b;
+  if(b=t.closest("[data-ssel]")){S.stockSel=b.dataset.ssel;S.confirmDel=null;renderStok()}
+  else if(t.id==="goBuy"){const it=S.stockSel||st.stock[0]?.name;S.tab="belanja";S.expSub="exp";S.expForm={...(S.expForm||{date:todayISO(),desc:"",amount:0,qty:0}),cat:STOK,item:it};render();window.scrollTo(0,0)}
+  else if(t.id==="a_add"){const af=S.adjForm;const it=S.stockSel||st.stock[0]?.name;if(!af.date||!af.qty){toast("Isi tarikh dan kuantiti pelarasan.");return}
+    const id=uid("a");const o={date:af.date,item:it,qty:n(af.qty),note:af.note||""};const mk=mkOf(o.date);localPut(mk,"stockAdj",id,o);
+    S.adjForm={date:af.date,qty:0,note:""};renderStok();setStatus("wait");await writeMonth(mk,{stockAdj:{[id]:o}});toast("Pelarasan disimpan")}
+  else if(b=t.closest("[data-aask]")){S.confirmDel=b.dataset.aask;renderStok()}
+  else if(b=t.closest("[data-adel]")){const a=allAdj().find(x=>x.id===b.dataset.adel);if(!a)return;const mk=mkOf(a.date);localPut(mk,"stockAdj",a.id,null);S.confirmDel=null;renderStok();setStatus("wait");await writeMonth(mk,{stockAdj:{[a.id]:null}});toast("Pelarasan dipadam")}
+  else if(t.id==="addItem"){const v=$("newItem").value.trim().toUpperCase();if(!v||st.stock.some(s=>s.name===v))return;st.stock.push({name:v,opening:0,openingDate:todayISO(),min:10});S.stockSel=v;saveSettings();renderStok()}
+});
+document.addEventListener("input",e=>{if(S.tab!=="stok"||!S.adjForm)return;const t=e.target;if(t.id==="a_qty")S.adjForm.qty=n(t.value);else if(t.id==="a_note")S.adjForm.note=t.value});
+document.addEventListener("change",e=>{if(S.tab!=="stok")return;const t=e.target,st=S.settings;
+  if(t.id==="a_date")S.adjForm.date=t.value;
+  else if(t.dataset.stk){const it=st.stock.find(s=>s.name===(S.stockSel||st.stock[0]?.name));if(!it)return;it[t.dataset.stk]=t.dataset.stk==="openingDate"?t.value:n(t.value);saveSettings();renderStok()}});
+
+/* ================= LAPORAN ================= */
+function monthly(){
+  const rows=allRows(),rets=allReturns(),exps=allExp(),yr=String(S.settings.year);
+  const ms=Array.from({length:12},(_,i)=>{const mk=yr+"-"+String(i+1).padStart(2,"0");
+    const a=agg(rows.filter(r=>r.date.startsWith(mk)));a.ret=rets.filter(r=>r.date.startsWith(mk)).reduce((s,r)=>s+r.v,0);
+    const ea=expAgg(exps.filter(e=>e.date.startsWith(mk)));a.op=ea.op;a.stockBuy=ea.stock;a.nExp=exps.filter(e=>e.date.startsWith(mk)).length;
+    a.netAll=a.net-a.ret-a.op;a.cash=a.net+a.cost-a.ret-a.op-a.stockBuy;a.any=a.n||a.nExp;return a});
+  return {rows,rets,exps,ms};
+}
+function barChart(labels,s1,s2,{h=220}={}){
+  const W=640,H=h,L=52,R=8,T=12,B=26,iw=W-L-R,ih=H-T-B;
+  const vals=s1.concat(s2||[]);let mx=Math.max(0,...vals),mn=Math.min(0,...vals);if(mx===mn)mx=1;
+  const step=nice((mx-mn)/4);mx=Math.ceil(mx/step)*step;mn=Math.floor(mn/step)*step;
+  const y=v=>T+ih-(v-mn)/(mx-mn)*ih;const bw=iw/labels.length;
+  let g="";for(let v=mn;v<=mx+1e-9;v+=step){g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="${Math.abs(v)<1e-9?1.4:.6}"/><text x="${L-6}" y="${y(v)+3}" text-anchor="end">${short(v)}</text>`}
+  let bars="";labels.forEach((lb,i)=>{const x=L+i*bw,w=s2?bw*.36:bw*.6;
+    const b=(v,off,col)=>{const y0=y(Math.max(0,v)),hh=Math.abs(y(v)-y(0));return `<rect x="${x+off}" y="${y0}" width="${w}" height="${Math.max(hh,v?1:0)}" rx="2" fill="${col}"><title>${lb}: ${rm(v)}</title></rect>`};
+    if(s2){bars+=b(s1[i],bw*.12,"var(--sun)")+b(s2[i],bw*.5,s2[i]<0?"var(--bad)":"var(--head)")}else bars+=b(s1[i],bw*.2,s1[i]<0?"var(--bad)":"var(--head)");
+    if(labels.length<=12||i%3===0||i===labels.length-1)bars+=`<text x="${x+bw/2}" y="${H-8}" text-anchor="middle">${lb}</text>`});
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}${bars}</svg>`;
+}
+function nice(x){const p=Math.pow(10,Math.floor(Math.log10(x||1)));const f=x/p;return (f<=1?1:f<=2?2:f<=5?5:10)*p}
+function short(v){const a=Math.abs(v);return (v<0?"-":"")+(a>=1000?(a/1000).toFixed(a>=10000?0:1)+"k":Math.round(a))}
+function renderLaporan(){
+  const {rows,rets,exps,ms}=monthly(),st=S.settings,m=S.repMonth,yr=String(st.year);
+  const pre=m?yr+"-"+String(m).padStart(2,"0"):yr;
+  const lastWith=ms.map((a,i)=>a.any?i+1:0).filter(Boolean).pop()||1;
+  const sel=rows.filter(r=>r.date.startsWith(pre));
+  const A=agg(sel);const T=m?ms[m-1]:ms.reduce((t,a)=>{for(const k of ["ret","op","stockBuy","netAll","cash","nExp"])t[k]+=a[k];return t},{ret:0,op:0,stockBuy:0,netAll:0,cash:0,nExp:0});
+  const prev=m>1?ms[m-2]:null;
+  const delta=(cur,old)=>{if(!prev||!old)return "";const d=cur/Math.abs(old)-(old<0?-1:1);return ` · <span class="${cur<old?"bad":"good"}">${cur<old?"▼":"▲"} ${pct(Math.abs(cur/old-1))}</span> vs ${BLN[m-2]}`};
+  const pc=[];for(const p of st.products)for(const c of st.channels){const rr=sel.filter(r=>r.prod===p.name&&r.chan===c);if(rr.length)pc.push({p:p.name,c,a:agg(rr)})}
+  const byCat={};exps.filter(e=>e.date.startsWith(pre)&&e.cat!==STOK).forEach(e=>byCat[e.cat]=(byCat[e.cat]||0)+n(e.amount));
+  let daily=[];if(m){const nd=new Date(+yr,m,0).getDate();for(let d=1;d<=nd;d++){const ds=pre+"-"+String(d).padStart(2,"0");
+    const rr=sel.filter(r=>r.date===ds);const rv=rets.filter(r=>r.date===ds).reduce((s,r)=>s+r.v,0);const a=agg(rr);daily.push({ds,d,a,rv,net:a.net-rv})}}
+  const best=daily.filter(x=>x.a.n).sort((a,b)=>b.net-a.net)[0], worst=daily.filter(x=>x.a.n).sort((a,b)=>a.net-b.net)[0];
+  const L=(l,v,cls="neg",sign="−")=>`<div class="${cls}"><span>${l}</span><span class="num">${sign}${rm(Math.abs(v))}</span></div>`;
+  const any=A.n||T.nExp;
+  $("main").innerHTML=`
+  <div class="row between" style="align-items:end">
+    <div><div class="eyebrow">Laporan</div><h2>${m?BULAN[m-1]+" "+yr:"Setahun "+yr}</h2></div>
+    <button class="btn ghost sm" id="xlsBtn" ${S.downloads?"":"hidden"}>Muat turun Excel</button></div>
+  ${monthChips(m,"data-rm",ms.map(a=>a.any))}
+  ${any?`
+  <div class="kpis">
+    <div class="kpi hero"><span class="eyebrow">Net profit bersih</span><span class="v">${rm(T.netAll)}</span><span class="d">${A.sales?pct(T.netAll/A.sales)+" margin":"selepas semua belanja"}${m?delta(T.netAll,prev&&prev.netAll):""}</span></div>
+    <div class="kpi t-sun"><span class="eyebrow">Total sales</span><span class="v">${rm(A.sales)}</span><span class="d">${int(A.purchase)} pakej${m?delta(A.sales,prev&&prev.sales):""}</span></div>
+    <div class="kpi t-leaf"><span class="eyebrow">Untung jualan</span><span class="v">${rm(A.net)}</span><span class="d">sebelum return & belanja</span></div>
+    <div class="kpi t-acc"><span class="eyebrow">Belanja operasi</span><span class="v">${rm(T.op)}</span><span class="d">+ return ${rm(T.ret)}</span></div>
+    <div class="kpi"><span class="eyebrow">FB Ads</span><span class="v">${rm(A.ads)}</span><span class="d">+ cukai ${rm(A.taxAds)}</span></div>
+    <div class="kpi"><span class="eyebrow">ROAS</span><span class="v">${x2(A.ads?A.sales/A.ads:0)}</span><span class="d">CPP ${A.purchase&&A.ads?rm(A.ads/A.purchase):"–"}</span></div>
+    <div class="kpi t-sky"><span class="eyebrow">Beli stok</span><span class="v">${rm(T.stockBuy)}</span><span class="d">masuk ke stok</span></div>
+    <div class="kpi t-sky"><span class="eyebrow">Aliran tunai</span><span class="v ${T.cash<0?"bad":""}">${rm(T.cash)}</span><span class="d">duit masuk − semua duit keluar</span></div>
+  </div>
+  <div class="split">
+    <div class="card"><h3>Dari sales ke net profit bersih</h3><div class="ledger">
+      <div><span>Total sales</span><span class="num">${rm(A.sales)}</span></div>
+      ${L("FB Ads + cukai",A.ads+A.taxAds)}${L("Shipping + cukai",A.ship)}${L("Kos produk + free gift",A.cost)}${A.other?L("Special, Open AI, Sabah/Sarawak",A.other):""}
+      <div class="sum"><span>Untung jualan</span><span class="num">${rm(A.net)}</span></div>
+      ${T.ret?L("Return",T.ret):""}${Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([c,v])=>L(c.charAt(0)+c.slice(1).toLowerCase(),v)).join("")}
+      <div class="total"><span>Net profit bersih</span><span class="num ${T.netAll<0?"bad":"good"}">${rm(T.netAll)}</span></div>
+    </div>
+    <div class="note">Beli stok (${rm(T.stockBuy)}) tak ditolak di sini kerana kosnya sudah dikira sebagai kos produk bila barang dijual. Lihat <b>Aliran tunai</b> untuk baki duit sebenar.</div></div>
+    ${m?`<div class="card chart"><h3>Profit harian · ${BULAN[m-1]}</h3>${barChart(daily.map(x=>String(x.d)),daily.map(x=>x.net),null)}
+      <div class="note">${best?`Terbaik: <b>${fmtDate(best.ds)}</b> <span class="num good">${rm(best.net)}</span>`:"Tiada jualan bulan ini."}${worst&&worst.net<0?` · Paling teruk: <b>${fmtDate(worst.ds)}</b> <span class="num bad">${rm(worst.net)}</span>`:""}</div></div>`
+    :`<div class="card chart"><div class="row between"><h3>Sales vs net profit bersih</h3>
+      <div class="legend"><span><i style="background:var(--sun)"></i>Sales</span><span><i style="background:var(--head)"></i>Net bersih</span></div></div>
+      ${barChart(BLN,ms.map(a=>a.sales),ms.map(a=>a.netAll))}</div>`}
+  </div>`:`<div class="empty">Tiada jualan atau belanja direkod untuk ${m?BULAN[m-1]:"tahun ini"}. Pergi ke Isi Harian atau Belanja untuk mula isi.</div>`}
+  ${m&&any?`<div class="card chart"><div class="row between"><h3>Sales vs net profit bersih bulanan</h3>
+      <div class="legend"><span><i style="background:var(--sun)"></i>Sales</span><span><i style="background:var(--head)"></i>Net bersih</span></div></div>
+      ${barChart(BLN,ms.map(a=>a.sales),ms.map(a=>a.netAll))}</div>`:""}
+  ${pc.length?`<div><h3 style="margin-bottom:8px">Ikut produk & saluran</h3><div class="tw"><table>
+    <thead><tr><th>Produk · saluran</th><th>Sales</th><th>FB Ads</th><th>Untung jualan</th><th>Margin</th><th>ROAS</th><th>Purchase</th><th>Pcs</th><th>CPP</th><th>Conv</th></tr></thead>
+    <tbody>${pc.map(x=>`<tr><td>${esc(x.p)} · <b>${esc(x.c)}</b></td><td class="num">${rm(x.a.sales)}</td><td class="num">${rm(x.a.ads)}</td>
+      <td class="num ${x.a.net<0?"bad":"good"}">${rm(x.a.net)}</td><td class="num">${x.a.sales?pct(x.a.net/x.a.sales):"–"}</td><td class="num">${x2(x.a.ads?x.a.sales/x.a.ads:0)}</td>
+      <td class="num">${int(x.a.purchase)}</td><td class="num">${int(x.a.qty)}</td><td class="num">${x.a.ads&&x.a.purchase?rm(x.a.ads/x.a.purchase):"–"}</td><td class="num">${x.a.clicks?pct(x.a.pc/x.a.clicks):"–"}</td></tr>`).join("")}</tbody>
+    <tfoot><tr><td>Jumlah</td><td class="num">${rm(A.sales)}</td><td class="num">${rm(A.ads)}</td><td class="num">${rm(A.net)}</td><td class="num">${A.sales?pct(A.net/A.sales):"–"}</td><td class="num">${x2(A.ads?A.sales/A.ads:0)}</td><td class="num">${int(A.purchase)}</td><td class="num">${int(A.qty)}</td><td class="num">${A.ads&&A.purchase?rm(A.ads/A.purchase):"–"}</td><td class="num">${A.clicks?pct(A.pc/A.clicks):"–"}</td></tr></tfoot>
+  </table></div></div>`:""}
+  ${m?(A.n?`<div><h3 style="margin-bottom:8px">Untung jualan setiap hari</h3><div class="tw" style="max-height:480px"><table>
+    <thead><tr><th>Tarikh</th>${st.products.map(p=>`<th>${esc(p.name)}</th>`).join("")}<th>Sales</th><th>Ads</th><th>Return</th><th>Untung / hari</th></tr></thead>
+    <tbody>${daily.map(x=>`<tr><td>${x.d} ${BLN[m-1]} <span class="note">${dayName(x.ds).slice(0,3)}</span></td>${st.products.map(p=>{const a=agg(sel.filter(r=>r.date===x.ds&&r.prod===p.name));return `<td class="num ${a.net<0?"bad":""}">${a.n?rm(a.net):"–"}</td>`}).join("")}
+      <td class="num">${x.a.n?rm(x.a.sales):"–"}</td><td class="num">${x.a.n?rm(x.a.ads):"–"}</td><td class="num">${x.rv?rm(x.rv):"–"}</td><td class="num ${x.net<0?"bad":x.a.n?"good":""}"><b>${x.a.n||x.rv?rm(x.net):"–"}</b></td></tr>`).join("")}</tbody>
+  </table></div><div class="note" style="margin-top:6px">Belanja operasi (${rm(T.op)}) ditolak sekali untuk sebulan, bukan ikut hari.</div></div>`:"")
+  :`<div><h3 style="margin-bottom:8px">Ringkasan bulanan</h3><div class="tw"><table>
+    <thead><tr><th>Bulan</th><th>Sales</th><th>FB Ads</th><th>Untung jualan</th><th>Return</th><th>Belanja</th><th>Net bersih</th><th>Margin</th><th>Beli stok</th><th>Aliran tunai</th><th>Kumulatif net</th></tr></thead>
+    <tbody>${(()=>{let cum=0;return ms.map((a,i)=>{cum+=a.netAll;const d=v=>a.any?rm(v):"–";return `<tr><td>${BULAN[i]}</td><td class="num">${d(a.sales)}</td><td class="num">${d(a.ads)}</td><td class="num">${d(a.net)}</td><td class="num">${a.ret?rm(a.ret):"–"}</td><td class="num">${a.op?rm(a.op):"–"}</td><td class="num ${a.netAll<0?"bad":a.any?"good":""}"><b>${d(a.netAll)}</b></td><td class="num">${a.sales?pct(a.netAll/a.sales):"–"}</td><td class="num">${a.stockBuy?rm(a.stockBuy):"–"}</td><td class="num ${a.cash<0?"bad":""}">${d(a.cash)}</td><td class="num">${i<lastWith?rm(cum):"–"}</td></tr>`}).join("")})()}</tbody>
+    <tfoot><tr><td>Jumlah</td><td class="num">${rm(A.sales)}</td><td class="num">${rm(A.ads)}</td><td class="num">${rm(A.net)}</td><td class="num">${rm(T.ret)}</td><td class="num">${rm(T.op)}</td><td class="num">${rm(T.netAll)}</td><td class="num">${A.sales?pct(T.netAll/A.sales):"–"}</td><td class="num">${rm(T.stockBuy)}</td><td class="num">${rm(T.cash)}</td><td></td></tr></tfoot>
+  </table></div></div>`}`;
+}
+document.addEventListener("click",e=>{if(S.tab!=="laporan")return;const b=e.target.closest("[data-rm]");if(b){S.repMonth=+b.dataset.rm;renderLaporan()}if(e.target.id==="xlsBtn")exportXlsx()});
+
+async function exportXlsx(){
+  if(!window.XLSX||!S.downloads){toast("Muat turun tak tersedia di paparan ini.");return}
+  const {rows,rets,exps,ms}=monthly(),st=S.settings;const X=window.XLSX;const wb=X.utils.book_new();
+  const r2=v=>Math.round(v*100)/100;
+  const add=(aoa,name)=>X.utils.book_append_sheet(wb,X.utils.aoa_to_sheet(aoa),name);
+  add([["MONTH","TOTAL SALES","TOTAL ADS","TAX ADS","UNTUNG JUALAN","TOTAL RETURN","BELANJA OPERASI","NET PROFIT BERSIH","PROFIT MARGIN","BELI STOK","ALIRAN TUNAI","TOTAL PURCHASE","QUANTITY (PCS)","ROAS"]]
+    .concat(ms.map((a,i)=>[BULAN[i],r2(a.sales),r2(a.ads),r2(a.taxAds),r2(a.net),r2(a.ret),r2(a.op),r2(a.netAll),a.sales?r2(a.netAll/a.sales*100)/100:0,r2(a.stockBuy),r2(a.cash),a.purchase,a.qty,a.ads?r2(a.sales/a.ads):0])),"RINGKASAN BULANAN");
+  const h=["DATE","DAY","PRODUK","SALURAN","OT TRIAL","OT JIMAT","OT SEMBUH/KELUARGA","COD TRIAL","COD JIMAT","COD SEMBUH/KELUARGA","HALIA PATCH DIJUAL","FB ADS","LINK CLICK","FREE POSTAGE","SPECIAL DISCOUNT/ORDER","OPEN AI","SABAH/SARAWAK","TOTAL PURCHASE","QUANTITY (PCS)","FREE HALIA PATCH","FREE KAYU","SALES ONLINE","TAX FB ADS","SHIPPING ONLINE","SHIPPING COD","TAX SHIPPING ONLINE","TAX SHIPPING COD","COST PRODUCT","FREE GIFT COST","UNTUNG JUALAN","ROAS","ROAS INCL TAX","COST PER PURCHASE","CONVERSION RATE","CATATAN"];
+  add([h].concat(rows.map(r=>{const c=r.c;return [r.date,dayName(r.date),r.prod,r.chan,...r.ot,...r.cod,r.patch,r.ads,r.clicks,r.freePost,r.special,r.openai,r.sabah,c.purchase,c.qty,c.freePatch||0,c.freeKayu||0,r2(c.sales),r2(c.taxAds||0),r2(c.shipOT||0),r2(c.shipCOD||0),r2(c.taxShipOT||0),r2(c.taxShipCOD||0),r2(c.cost||0),r2(c.gift||0),r2(c.net),r2(c.roas||0),r2(c.roasTax||0),r2(c.cpp||0),r2(c.conv||0),r.note||""]})),"INPUT HARIAN");
+  const d3=[["MONTH","PRODUK","SALURAN","SALES","ADS","UNTUNG JUALAN","PURCHASE","PCS"]];
+  ms.forEach((_,i)=>{const mk=st.year+"-"+String(i+1).padStart(2,"0");for(const p of st.products)for(const c of st.channels){const a=agg(rows.filter(r=>r.date.startsWith(mk)&&r.prod===p.name&&r.chan===c));if(a.n)d3.push([BULAN[i],p.name,c,r2(a.sales),r2(a.ads),r2(a.net),a.purchase,a.qty])}});
+  add(d3,"IKUT PRODUK & SALURAN");
+  const days={};rows.forEach(r=>{(days[r.date]=days[r.date]||[]).push(r)});rets.forEach(r=>{days[r.date]=days[r.date]||[]});
+  add([["DATE","DAY",...st.products.map(p=>p.name+" UNTUNG"),"TOTAL SALES","TOTAL ADS","RETURN","UNTUNG / HARI"]].concat(Object.keys(days).sort().map(d=>{const rr=days[d];const a=agg(rr);const rv=rets.filter(r=>r.date===d).reduce((s,r)=>s+r.v,0);return [d,dayName(d),...st.products.map(p=>r2(agg(rr.filter(r=>r.prod===p.name)).net)),r2(a.sales),r2(a.ads),r2(rv),r2(a.net-rv)]})),"PROFIT HARIAN");
+  add([["DATE","KATEGORI","KETERANGAN","JUMLAH (RM)","ITEM STOK","KUANTITI"]].concat(exps.map(e=>[e.date,e.cat,e.desc||"",r2(n(e.amount)),e.item||"",e.qty||""])),"BELANJA");
+  add([["ITEM","STOK AWAL","TARIKH STOK AWAL","MASUK","KELUAR","PELARASAN","BAKI","AMARAN","NILAI ANGGARAN"]].concat(st.stock.map(it=>{const s=stockStat(it,rows,exps,allAdj());return [it.name,n(it.opening),s.od,s.bought,s.used,s.adjQ,s.bal,n(it.min),r2(s.value)]})),"STOK");
+  add([["DATE","PRODUK","PAKEJ","BILANGAN","SPECIAL ORDER","TOTAL RETURN","CATATAN"]].concat(rets.map(r=>[r.date,r.prod,(prodOf(r.prod)?.pk||[])[r.pk]||"",r.count,r.special,r2(r.v),r.note||""])),"RETURN");
+  const out=X.write(wb,{bookType:"xlsx",type:"array"});
+  try{await S.downloads.save({filename:"JT_Flipping_PnL_"+st.year+".xlsx",data:new Blob([out])});toast("Fail Excel disimpan")}
+  catch(e){if(e&&e.code!=="declined")toast("Tak dapat muat turun ("+(e.code||"ralat")+")")}
+}
+
+/* ================= TETAPAN ================= */
+function renderTetapan(){
+  const st=S.settings;
+  const arrRow=(rid,f,l)=>{const r=st.rates.find(x=>x.id===rid);return `<span>${l}</span>${[0,1,2].map(i=>`<input type="number" step="any" min="0" value="${n(r[f][i])}" data-rate="${rid}:${f}:${i}" aria-label="${l} ${i+1}">`).join("")}`};
+  const groups={};st.rates.forEach(r=>{(groups[r.prod+"|"+r.chan]=groups[r.prod+"|"+r.chan]||[]).push(r)});
+  $("main").innerHTML=`<div><div class="eyebrow">Tetapan</div><h2>Harga, kos & cukai</h2><p class="note" style="margin:4px 0 0">Perubahan disimpan sendiri. Harga naik atau turun? Tekan “Harga baru mula…” supaya rekod lama kekal guna harga lama.</p></div>
+  <div class="card"><h3>Tema paparan</h3><div class="skins-grid">${skinList()}</div><div class="note">Pilihan tema disimpan di peranti ini sahaja.</div></div>
+  <div class="card"><h3>Akaun</h3>
+    <div class="grid2"><label class="f">Kata laluan lama<input type="password" id="pw_old" autocomplete="current-password"></label>
+    <label class="f">Kata laluan baru (min. 6 aksara)<input type="password" id="pw_new" autocomplete="new-password"></label></div>
+    <div class="row"><button class="btn sm" id="pwChange">Tukar kata laluan</button><button class="btn ghost sm" id="logoutBtn">Log keluar</button></div>
+    <div class="note">Tukar kata laluan akan log keluar semua peranti lain.</div></div>
+  <div class="card"><h3>Cukai</h3><div class="grid3">
+    <label class="f">Cukai FB Ads (%)<input type="number" step="any" value="${n(st.taxAd)*100}" data-set="taxAd"></label>
+    <label class="f">Cukai shipping (%)<input type="number" step="any" value="${n(st.taxShip)*100}" data-set="taxShip"></label>
+    <label class="f">Tahun<input type="number" value="${st.year}" data-set="year"></label></div></div>
+  <div class="card"><h3>Kategori belanja</h3><div class="chips">${st.expenseCats.map((c,i)=>`<span class="chip" style="cursor:default">${esc(c)}${c===STOK?"":` <button class="btn ghost sm" style="padding:0 6px;border:0" data-delcat="${i}" aria-label="Buang ${esc(c)}">×</button>`}</span>`).join("")}</div>
+    <div class="row"><input type="text" id="newCat" placeholder="cth. YURAN PLATFORM" style="flex:1"><button class="btn sm" id="addCat">Tambah kategori</button></div></div>
+  <div class="card"><h3>Produk</h3>${st.products.map((p,pi)=>`<div style="display:grid;gap:8px;padding-bottom:10px;border-bottom:1px dashed var(--line)">
+      <b>${esc(p.name)}</b>
+      <div class="rate-grid"><span></span><span class="h">Pakej 1</span><span class="h">Pakej 2</span><span class="h">Pakej 3</span>
+        <span>Nama pakej</span>${[0,1,2].map(i=>`<input type="text" value="${esc(p.pk[i])}" data-prodf="${pi}:pk:${i}">`).join("")}
+        <span>Pcs / pakej</span>${[0,1,2].map(i=>`<input type="number" min="0" value="${n(p.units[i])}" data-prodf="${pi}:units:${i}">`).join("")}
+        <span>Nilai return (RM)</span>${[0,1,2].map(i=>`<input type="number" min="0" step="any" value="${n(p.ret[i])}" data-prodf="${pi}:ret:${i}">`).join("")}</div>
+      <div class="grid2"><label class="f">Kos halia patch (RM/pcs)<input type="number" step="any" value="${n(p.patchCost)}" data-prodf="${pi}:patchCost"></label>
+      <label class="f">Kos kayu (RM/pcs)<input type="number" step="any" value="${n(p.kayuCost)}" data-prodf="${pi}:kayuCost"></label></div></div>`).join("")}
+    <div class="row"><input type="text" id="newProd" placeholder="Nama produk baru" style="flex:1"><button class="btn sm" id="addProd">Tambah produk</button></div></div>
+  <div class="card"><h3>Saluran</h3><div class="chips">${st.channels.map(c=>`<span class="chip" style="cursor:default">${esc(c)}</span>`).join("")}</div>
+    <div class="row"><input type="text" id="newChan" placeholder="Saluran baru (cth. TIKTOK)" style="flex:1"><button class="btn sm" id="addChan">Tambah saluran</button></div></div>
+  <div class="card"><h3>Kadar harga ikut produk & saluran</h3>
+    ${Object.entries(groups).map(([g,list])=>{list.sort((a,b)=>a.from<b.from?1:-1);const [pp,cc]=g.split("|");return `<div style="display:grid;gap:8px;padding-bottom:12px;border-bottom:1px dashed var(--line)">
+      <div class="row between"><b>${esc(pp)} · ${esc(cc)}</b><button class="btn ghost sm" data-newrate="${list[0].id}">Harga baru mula…</button></div>
+      ${list.map((r,ix)=>`<details ${S.openRate===r.id?"open":""} data-rid="${r.id}"><summary>${ix===0?"Semasa":"Lama"}: berkuat dari ${fmtDate(r.from)} <span class="note num">· OT ${r.ot.join("/")} · COD ${r.cod.join("/")}</span></summary>
+        <div style="display:grid;gap:8px;margin-top:10px">
+          <div class="grid3"><label class="f">Berkuat dari<input type="date" value="${r.from}" data-ratef="${r.id}:from"></label>
+          <label class="f">Kos produk (RM/pcs)<input type="number" step="any" value="${n(r.cost)}" data-ratef="${r.id}:cost"></label>
+          <label class="f">Harga halia patch dijual<input type="number" step="any" value="${n(r.patchPrice)}" data-ratef="${r.id}:patchPrice"></label></div>
+          <div class="rate-grid"><span></span>${(prodOf(r.prod)?.pk||["1","2","3"]).map(x=>`<span class="h">${esc(x)}</span>`).join("")}
+            ${arrRow(r.id,"ot","Harga OT")}${arrRow(r.id,"cod","Harga COD")}${arrRow(r.id,"posOT","Pos OT")}${arrRow(r.id,"posCOD","Pos COD")}
+            ${arrRow(r.id,"patchOT","Free patch OT")}${arrRow(r.id,"patchCOD","Free patch COD")}${arrRow(r.id,"kayuOT","Free kayu OT")}${arrRow(r.id,"kayuCOD","Free kayu COD")}</div>
+          ${list.length>1?`<div><button class="btn danger sm" data-delrate="${r.id}">${S.confirmDel===r.id?"Tekan sekali lagi untuk padam":"Padam kadar ini"}</button></div>`:""}
+        </div></details>`).join("")}</div>`}).join("")}
+    <div class="note">Kombinasi produk & saluran yang belum ada kadar:</div>
+    <div class="chips">${st.products.flatMap(p=>st.channels.filter(c=>!groups[p.name+"|"+c]).map(c=>`<button class="chip" data-addrate="${esc(p.name)}|${esc(c)}">+ ${esc(p.name)} · ${esc(c)}</button>`)).join("")||'<span class="note">Semua lengkap.</span>'}</div>
+  </div>`;
+}
+const z3=()=>[0,0,0];
+document.addEventListener("change",e=>{if(S.tab!=="tetapan")return;const t=e.target,st=S.settings;let d;
+  if(d=t.dataset.set){st[d]=d==="year"?n(t.value):n(t.value)/100;saveSettings()}
+  else if(d=t.dataset.prodf){const [pi,f,i]=d.split(":");const p=st.products[+pi];if(i!=null)p[f][+i]=f==="pk"?t.value:n(t.value);else p[f]=n(t.value);saveSettings()}
+  else if(d=t.dataset.rate){const [id,f,i]=d.split(":");st.rates.find(r=>r.id===id)[f][+i]=n(t.value);saveSettings()}
+  else if(d=t.dataset.ratef){const [id,f]=d.split(":");const r=st.rates.find(r=>r.id===id);r[f]=f==="from"?t.value:n(t.value);saveSettings();if(f==="from"){S.openRate=id;renderTetapan()}}
+});
+document.addEventListener("toggle",e=>{const d=e.target;if(d.dataset&&d.dataset.rid&&d.open)S.openRate=d.dataset.rid},true);
+document.addEventListener("click",e=>{if(S.tab!=="tetapan")return;const t=e.target,st=S.settings;let b;
+  if(b=t.closest("[data-newrate]")){const src=st.rates.find(r=>r.id===b.dataset.newrate);const nr=JSON.parse(JSON.stringify(src));nr.id=uid("r");nr.from=todayISO();st.rates.push(nr);S.openRate=nr.id;saveSettings();renderTetapan();toast("Kadar baru dibuat. Ubah harga di bawah.")}
+  else if(b=t.closest("[data-addrate]")){const [p,c]=b.dataset.addrate.split("|");const nr={id:uid("r"),prod:p,chan:c,from:st.year+"-01-01",ot:z3(),cod:z3(),posOT:[5,5,5],posCOD:[8,8,8],cost:0,patchOT:z3(),patchCOD:z3(),kayuOT:z3(),kayuCOD:z3(),patchPrice:0};st.rates.push(nr);S.openRate=nr.id;saveSettings();renderTetapan()}
+  else if(b=t.closest("[data-delrate]")){const id=b.dataset.delrate;if(S.confirmDel!==id){S.confirmDel=id;S.openRate=id;renderTetapan();return}st.rates=st.rates.filter(r=>r.id!==id);S.confirmDel=null;saveSettings();renderTetapan()}
+  else if(b=t.closest("[data-delcat]")){st.expenseCats.splice(+b.dataset.delcat,1);saveSettings();renderTetapan()}
+  else if(t.id==="addCat"){const v=$("newCat").value.trim().toUpperCase();if(!v||st.expenseCats.includes(v))return;st.expenseCats.push(v);saveSettings();renderTetapan()}
+  else if(t.id==="addProd"){const v=$("newProd").value.trim().toUpperCase();if(!v||prodOf(v))return;st.products.push({name:v,pk:["TRIAL","JIMAT","SEMBUH"],units:[1,3,5],patchCost:2,kayuCost:5,ret:[0,0,0]});if(!st.stock.some(s=>s.name===v))st.stock.push({name:v,opening:0,openingDate:todayISO(),min:50});saveSettings();renderTetapan()}
+  else if(t.id==="addChan"){const v=$("newChan").value.trim().toUpperCase();if(!v||st.channels.includes(v))return;st.channels.push(v);saveSettings();renderTetapan()}
+});
+
+/* ---------- sambungan server (api.php) ---------- */
+async function api(action,body){
+  let r;try{r=await fetch("api.php?action="+action,{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json","X-JT":"1"},body:JSON.stringify(body||{})})}
+  catch(_){throw {code:"unavailable",message:"Tiada sambungan internet."}}
+  let j={};try{j=await r.json()}catch(_){j={error:"unavailable",message:"Server tidak membalas dengan betul (semak PHP)."}}
+  if(r.status===401&&j.error==="auth"){S.auth="login";render()}
+  if(!r.ok||j.error)throw {code:j.error||"unavailable",message:j.message||("Ralat "+r.status)};
+  return j;
+}
+function makeDb(){
+  const cache={},docL={},colL=[];let rev=0;
+  const snap=p=>{const v=cache[p];return {id:p.split("/").pop(),exists:v!=null,data:()=>v==null?undefined:JSON.parse(JSON.stringify(v)),metadata:{fromCache:false,hasPendingWrites:false}}};
+  const notify=()=>{for(const p in docL)docL[p].forEach(f=>f(snap(p)));colL.forEach(({c,f})=>{const docs=Object.keys(cache).filter(k=>k.startsWith(c+"/")).sort().map(snap);f({docs,size:docs.length,empty:!docs.length})})};
+  async function load(){const j=await api("load");for(const k in cache)delete cache[k];Object.assign(cache,j.docs||{});rev=j.rev;notify()}
+  async function poll(){if(document.hidden||S.auth)return;try{const j=await api("version");if(j.rev!==rev)await load()}catch(_){}}
+  setInterval(poll,30000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()});window.addEventListener("focus",poll);
+  const db={load,
+    doc:p=>({path:p,
+      get:async()=>{const j=await api("get",{path:p});if(j.exists)cache[p]=j.data;else delete cache[p];return snap(p)},
+      set:async d=>{const j=await api("set",{path:p,data:d});cache[p]=JSON.parse(JSON.stringify(d));rev=j.rev;notify()},
+      update:async d=>{const j=await api("update",{path:p,data:d});cache[p]=j.data;rev=j.rev;notify()},
+      onSnapshot:(f)=>{(docL[p]=docL[p]||[]).push(f);return ()=>{docL[p]=docL[p].filter(x=>x!==f)}}}),
+    collection:c=>({onSnapshot:(f)=>{const o={c,f};colL.push(o);return ()=>{const i=colL.indexOf(o);if(i>=0)colL.splice(i,1)}}})};
+  return db;
+}
+function renderLogin(){
+  const setup=S.auth==="setup";
+  $("tabsTop").innerHTML="";$("tabsBottom").innerHTML="";
+  $("main").innerHTML=`<div class="card" style="max-width:420px;margin:24px auto;width:100%">
+    <div class="eyebrow">${setup?"Kali pertama":"Log masuk"}</div>
+    <h2>${setup?"Cipta kata laluan":"Selamat kembali"}</h2>
+    <p class="note" style="margin:0">${setup?"Kata laluan ini melindungi data jualan kau. Simpan elok-elok; tiada cara reset tanpa akses cPanel.":"Masukkan kata laluan untuk buka laporan untung rugi."}</p>
+    <form id="loginForm" style="display:grid;gap:10px">
+      <label class="f">Kata laluan<input type="password" id="lg_pw" autocomplete="${setup?"new-password":"current-password"}" required minlength="${setup?6:1}"></label>
+      ${setup?`<label class="f">Ulang kata laluan<input type="password" id="lg_pw2" autocomplete="new-password" required></label>`:""}
+      <div class="warn" id="lg_err" hidden></div>
+      <button class="btn pri" type="submit">${setup?"Simpan & masuk":"Log masuk"}</button>
+    </form></div>`;
+  setTimeout(()=>{const el=$("lg_pw");if(el)el.focus()},50);
+}
+document.addEventListener("submit",async e=>{if(e.target.id!=="loginForm")return;e.preventDefault();
+  const pw=$("lg_pw").value,err=$("lg_err");err.hidden=true;
+  if(S.auth==="setup"&&pw!==$("lg_pw2").value){err.textContent="Kata laluan tak sama.";err.hidden=false;return}
+  try{await api(S.auth==="setup"?"setup":"login",{password:pw});S.auth=null;start()}
+  catch(x){err.textContent=x.message||"Gagal log masuk.";err.hidden=false}});
+document.addEventListener("click",async e=>{
+  if(e.target.id==="logoutBtn"){try{await api("logout")}catch(_){}location.reload()}
+  else if(e.target.id==="pwChange"){try{await api("password",{old:$("pw_old").value,new:$("pw_new").value});toast("Kata laluan ditukar");$("pw_old").value="";$("pw_new").value=""}catch(x){toast(x.message||"Gagal tukar kata laluan")}}
+});
+S.downloads={save:async({filename,data})=>{const url=URL.createObjectURL(data instanceof Blob?data:new Blob([data]));const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);return {status:"saved"}}};
+
+/* ---------- boot ---------- */
+try{const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h))S.tab=h}catch(_){}
+renderTabs();
+let started=false;
+async function start(){
+  try{const st=await api("status");if(!st.loggedIn){S.auth=st.setup?"setup":"login";render();return}}
+  catch(x){setStatus("off");$("main").innerHTML=`<div class="empty">${esc(x.message||"Tak dapat sambung ke server.")}</div>`;return}
+  S.auth=null;
+  if(!started){started=true;
+    const db=makeDb();S.db=db;
+    const typing=()=>{const a=document.activeElement;return a&&a.closest&&a.closest("#main")&&/INPUT|SELECT|TEXTAREA/.test(a.tagName)};
+    db.doc("settings/main").onSnapshot(s=>{
+      if(S.loadedS&&S.tab==="tetapan"&&typing())return;
+      S.settings=s.exists?normSettings(JSON.parse(JSON.stringify(s.data()))):null;S.loadedS=true;setStatus("ok");render()});
+    db.collection("months").onSnapshot(s=>{
+      const m={};s.docs.forEach(d=>{const v=d.data()||{};const o={};for(const f of FIELDS)o[f]=Object.fromEntries(Object.entries(v[f]||{}).filter(([,x])=>x));m[d.id]=o});
+      S.months=m;S.loadedM=true;setStatus("ok");
+      if(typing()){if(S.tab==="isi"&&S.form)renderPreview();return}
+      if(S.tab==="isi"&&S.form&&!S.dirty)loadForm(S.form.date,S.form.prod,S.form.chan);
+      render()});
+  }
+  render();
+  try{await S.db.load()}catch(x){setStatus("off");if(x.code!=="auth")toast(x.message||"Gagal muat data")}
+}
+start();
+if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
+})();
+</script>
+</body>
+</html>
